@@ -14,6 +14,7 @@ export const formatPhone = (value) => {
 };
 
 
+
   //유호성 검사
 export const validateRegister = (e, formData) => {
   const { email, password, passwordConfirm, name, phone } = formData;

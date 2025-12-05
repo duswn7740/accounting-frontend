@@ -4,7 +4,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Layout from './layout/Layout';
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import Register from './pages/auth/Register'
 import Home from './pages/Home'
 import Header from './layout/Header'
@@ -15,6 +15,7 @@ import CompanyRegister from './pages/Company/CompanyRegister'
 import GeneralVoucher from './pages/voucher/GeneralVoucher'
 import SalesPurchaseVoucher from './pages/voucher/SalesPurchaseVoucher'
 import CompanySearch from './pages/Company/CompanySearch'
+import BusinessCompanyManage from './pages/MyPage/BusinessCompanyManage'
 
 function App() {
   
@@ -30,13 +31,13 @@ function App() {
           <Route index element={<Home />} />
           
           {/* 마이페이지 */}
-          <Route path="mypage" element={<CompanyManage />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="mypage/profile" element={<Profile />} />
+          <Route path="mypage/company/register" element={<CompanyRegister />} />
+          <Route path="mypage/company/search" element={<CompanySearch />} />
+          <Route path="mypage/company/manage" element={<CompanyManage />} />
+          <Route path="mypage/company/business-manage" element={<BusinessCompanyManage />} />
           
-          {/* 회사 */}
-          <Route path="company/register" element={<CompanyRegister />} />
-          <Route path="company/search" element={<CompanySearch />} />
-          
+                    
           {/* 전표 */}
           <Route path="voucher/general" element={<GeneralVoucher />} />
           <Route path="voucher/sales-purchase" element={<SalesPurchaseVoucher />} />

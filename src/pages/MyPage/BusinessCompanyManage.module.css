@@ -1,0 +1,138 @@
+/* 탭 메뉴 */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.tab {
+  padding: 12px 24px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: #7f8c8d;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #2c3e50;
+}
+
+.activeTab {
+  color: #3498db;
+  border-bottom-color: #3498db;
+  font-weight: bold;
+}
+
+.tabContent {
+  margin-top: 20px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.employeeList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.employeeCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  transition: box-shadow 0.2s;
+}
+
+.employeeCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employeeInfo {
+  flex: 1;
+}
+
+.employeeName {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.roleBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: #3498db;
+  color: white;
+  font-size: 12px;
+  border-radius: 12px;
+  font-weight: normal;
+}
+
+.employeeDetail {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 5px 0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.approveButton {
+  padding: 10px 20px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.approveButton:hover {
+  background-color: #229954;
+}
+
+.approveButton:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.rejectButton {
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.rejectButton:hover {
+  background-color: #c0392b;
+}
+
+.rejectButton:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}

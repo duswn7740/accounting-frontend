@@ -1,0 +1,143 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.searchForm {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.searchButton {
+  padding: 12px 30px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.searchButton:hover {
+  background-color: #2980b9;
+}
+
+.searchButton:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.resultSection {
+  margin-bottom: 30px;
+}
+
+.resultTitle {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #34495e;
+}
+
+.companyList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.companyCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  transition: box-shadow 0.2s;
+}
+
+.companyCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.companyInfo {
+  flex: 1;
+}
+
+.companyName {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.companyDetail {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 5px 0;
+}
+
+.applyButton {
+  padding: 10px 20px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.applyButton:hover {
+  background-color: #229954;
+}
+
+.applyButton:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.cancelButton {
+  padding: 12px 30px;
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #7f8c8d;
+}

@@ -48,3 +48,12 @@
   background-color: #3498db;
   font-weight: bold;
 }
+
+.sidebarTitle {
+  padding: 20px 25px;
+  margin: 0;
+  font-size: 18px;
+  color: #ecf0f1;
+  border-bottom: 2px solid #3498db;
+  margin-bottom: 20px;
+}

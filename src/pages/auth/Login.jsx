@@ -55,10 +55,15 @@ function Login() {
           '회사를 검색하시겠습니까?\n(나중에 검색할 수 있습니다)'
         );
         if (searchCompany) {
-          nav('/company/search');
+          nav('/mypage/company/search');
           return;
         }
       }
+
+      // 회사가 있으면 회사명도 저장 (백엔드에서 회사명 받아오기)
+      if (response.user.hasCompany && response.companyName) {
+        localStorage.setItem('currentCompanyName', response.companyName);
+}
     }
       
       nav('/');
