@@ -103,6 +103,40 @@ function BusinessCompanyManage() {
   if (!currentCompany) {
     return null;
   }
+
+  // 역할 변경 핸들러
+  const handleRoleChange = async (companyUserId, newRole) => {
+    const employee = approvedEmployees.find(e => e.companyUserId === companyUserId);
+    const roleText = newRole === 'ACCOUNTANT' ? '회계담당자' : '임원';
+    
+    const confirm = window.confirm(`${employee.name}님의 역할을 ${roleText}로 변경하시겠습니까?`);
+    if (!confirm) {
+      // select를 원래 값으로 되돌리기 위해 강제 리렌더링
+      setApprovedEmployees([...approvedEmployees]);
+      return;
+    }
+    
+    try {
+      setProcessing(companyUserId);
+      
+      const response = await companyApi.updateEmployeeRole(companyUserId, newRole);
+      alert(response.message);
+      
+      // 목록 새로고침
+      const approvedRes = await companyApi.getApprovedEmployees(currentCompany.companyId);
+      setApprovedEmployees(approvedRes.employees);
+      
+    } catch (err) {
+      alert(err.response?.data?.error || '역할 변경 실패');
+      
+      // 실패 시 원래 값으로 되돌리기
+      const approvedRes = await companyApi.getApprovedEmployees(currentCompany.companyId);
+      setApprovedEmployees(approvedRes.employees);
+      
+    } finally {
+      setProcessing(null);
+    }
+  };
   
   return (
     <div className={styles.container}>
@@ -193,9 +227,9 @@ function BusinessCompanyManage() {
                   <div className={styles.employeeInfo}>
                     <h3 className={styles.employeeName}>
                       {employee.name}
-                      <span className={styles.roleBadge}>
-                        {employee.role === 'ADMIN' ? '관리자' : '직원'}
-                      </span>
+                      {employee.role === 'ADMIN' && (
+                        <span className={styles.roleBadge}>관리자</span>
+                      )}
                     </h3>
                     <p className={styles.employeeDetail}>이메일: {employee.email}</p>
                     {employee.phone && (
@@ -204,7 +238,24 @@ function BusinessCompanyManage() {
                     <p className={styles.employeeDetail}>
                       승인일: {new Date(employee.approvedAt).toLocaleString('ko-KR')}
                     </p>
+                    
+                    {/* 권한 표시 */}
+                    {employee.role !== 'ADMIN' && (
+                      <div className={styles.roleSection}>
+                        <label className={styles.roleLabel}>권한:</label>
+                        <select
+                          value={employee.role}
+                          onChange={(e) => handleRoleChange(employee.companyUserId, e.target.value)}
+                          disabled={processing === employee.companyUserId}
+                          className={styles.roleSelect}
+                        >
+                          <option value="ACCOUNTANT">회계담당자</option>
+                          <option value="VIEWER">임원</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
+                  
                   {employee.role !== 'ADMIN' && (
                     <div className={styles.actionButtons}>
                       <button

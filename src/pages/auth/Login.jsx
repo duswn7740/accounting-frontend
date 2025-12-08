@@ -37,6 +37,9 @@ function Login() {
       
       // 사용자 정보 저장
       localStorage.setItem('user', JSON.stringify(response.user));
+
+      // 회사명 초기화 (로그인 시 새로 선택하도록)
+      localStorage.removeItem('currentCompanyName');
       
       alert(`${response.user.name}님 환영합니다!`);
 

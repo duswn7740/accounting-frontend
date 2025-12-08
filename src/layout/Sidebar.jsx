@@ -57,7 +57,7 @@ function Sidebar() {
             <NavLink to="/accounts">계정과목 관리</NavLink>
           </li>
           <li>
-            <NavLink to="/clients">거래처 관리</NavLink>
+            <NavLink to="/clients/manage">거래처 관리</NavLink>
           </li>
         </ul>
       </nav>

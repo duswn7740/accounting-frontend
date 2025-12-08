@@ -1,0 +1,390 @@
+import { useState, useEffect } from 'react';
+import * as clientApi from '@/api/clientApi';
+import { formatBusinessNumber, formatCompanyTel } from '@/utils/companyValidate';
+import styles from './ClientModal.module.css';
+
+function ClientModal({ client, category, companyId, onClose, onSuccess }) {
+  const isEdit = !!client;
+  
+  const [formData, setFormData] = useState({
+    clientCode: '',
+    clientName: '',
+    businessNumber: '',
+    ceoName: '',
+    address: '',
+    tel: '',
+    email: '',
+    clientType: '양방'
+  });
+  
+  const [isCodeChecked, setIsCodeChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
+  // 수정 모드일 때 데이터 채우기
+  useEffect(() => {
+    if (client) {
+      setFormData({
+        clientCode: client.client_code || '',
+        clientName: client.client_name || '',
+        businessNumber: client.business_number || '',
+        ceoName: client.ceo_name || '',
+        address: client.address || '',
+        tel: client.tel || '',
+        email: client.email || '',
+        clientType: client.client_type || '양방'
+      });
+      setIsCodeChecked(true); // 수정 모드는 코드 체크 불필요
+    }
+  }, [client]);
+  
+  // 입력 변경
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let newValue = value;
+    
+    if (name === 'clientCode') {
+      // 숫자만 입력, 5자리까지
+      newValue = value.replace(/\D/g, '').slice(0, 5);
+      setIsCodeChecked(false); // 코드 변경 시 체크 초기화
+    }
+    
+    if (name === 'businessNumber') {
+      newValue = formatBusinessNumber(value);
+    }
+    
+    if (name === 'tel') {
+      newValue = formatCompanyTel(value);
+    }
+    
+    setFormData({
+      ...formData,
+      [name]: newValue
+    });
+  };
+  
+  // 거래처 코드 중복 확인
+  const handleCheckCode = async () => {
+    if (!formData.clientCode) {
+      alert('거래처 코드를 입력해주세요');
+      return;
+    }
+    
+    if (formData.clientCode.length !== 5) {
+      alert('거래처 코드는 5자리여야 합니다');
+      return;
+    }
+    
+    try {
+      const result = await clientApi.checkClientCode(
+        companyId, 
+        formData.clientCode,
+        category
+      );
+      
+      if (result.available) {
+        alert('사용 가능한 코드입니다');
+        setIsCodeChecked(true);
+      } else {
+        alert(result.message);
+        setIsCodeChecked(false);
+      }
+      
+    } catch (err) {
+      alert(err.response?.data?.error || '중복 확인 실패');
+      setIsCodeChecked(false);
+    }
+  };
+  
+  // 자동 생성
+  const handleAutoGenerate = async () => {
+    try {
+      const result = await clientApi.getNextClientCode(companyId, category);
+      
+      setFormData({
+        ...formData,
+        clientCode: result.clientCode
+      });
+      
+      setIsCodeChecked(true);
+      alert(`자동 생성된 코드: ${result.clientCode}`);
+      
+    } catch (err) {
+      alert(err.response?.data?.error || '자동 생성 실패');
+    }
+  };
+  
+  // 주소 검색
+  const handleSearchAddress = () => {
+    new window.daum.Postcode({
+      oncomplete: function(data) {
+        const fullAddress = data.address;
+        const extraAddress = data.bname ? ` (${data.bname})` : '';
+        
+        setFormData({
+          ...formData,
+          address: fullAddress + extraAddress
+        });
+      }
+    }).open();
+  };
+  
+  // 저장
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // 필수 항목 체크
+    if (!formData.clientName.trim()) {
+      alert('거래처명을 입력해주세요');
+      return;
+    }
+    
+    if (!formData.businessNumber.trim()) {
+      alert('사업자번호를 입력해주세요');
+      return;
+    }
+    
+    if (!formData.ceoName.trim()) {
+      alert('대표자명을 입력해주세요');
+      return;
+    }
+    
+    if (!formData.address.trim()) {
+      alert('주소를 입력해주세요');
+      return;
+    }
+    
+    if (!isEdit && !isCodeChecked) {
+      alert('거래처 코드 중복 확인을 해주세요');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      const submitData = {
+        companyId,
+        category,
+        clientCode: formData.clientCode,
+        clientName: formData.clientName,
+        businessNumber: formData.businessNumber.replace(/\D/g, ''),
+        ceoName: formData.ceoName,
+        address: formData.address,
+        tel: formData.tel.replace(/\D/g, ''),
+        email: formData.email,
+        clientType: formData.clientType
+      };
+      
+      if (isEdit) {
+        await clientApi.updateClient(client.client_id, submitData);
+        alert('수정되었습니다');
+      } else {
+        await clientApi.createClient(submitData);
+        alert('등록되었습니다');
+      }
+      
+      onSuccess();
+      
+    } catch (err) {
+      alert(err.response?.data?.error || '저장 실패');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>
+            {isEdit ? '거래처 수정' : '거래처 등록'}
+            <span className={styles.categoryBadge}>{category}</span>
+          </h2>
+          <button onClick={onClose} className={styles.closeButton}>✕</button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {/* 거래처 코드 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              거래처 코드<span className={styles.required}>*</span>
+            </label>
+            {isEdit ? (
+              <input
+                type="text"
+                value={formData.clientCode}
+                readOnly
+                className={styles.input}
+                style={{ backgroundColor: '#f8f9fa', cursor: 'default' }}
+              />
+            ) : (
+              <>
+                <div className={styles.codeWrapper}>
+                  <input
+                    type="text"
+                    name="clientCode"
+                    value={formData.clientCode}
+                    onChange={handleChange}
+                    className={styles.input}
+                    placeholder="00000 (5자리)"
+                    maxLength={5}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCheckCode}
+                    className={styles.checkButton}
+                  >
+                    중복 확인
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAutoGenerate}
+                    className={styles.autoButton}
+                  >
+                    자동 생성
+                  </button>
+                </div>
+                {formData.clientCode && !isCodeChecked && (
+                  <p className={styles.warningMessage}>중복 확인을 해주세요</p>
+                )}
+              </>
+            )}
+          </div>
+          
+          {/* 거래처명 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              거래처명<span className={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              name="clientName"
+              value={formData.clientName}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="거래처명"
+              required
+            />
+          </div>
+          
+          {/* 사업자번호 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              사업자번호<span className={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              name="businessNumber"
+              value={formData.businessNumber}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="000-00-00000"
+              required
+            />
+          </div>
+          
+          {/* 대표자명 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              대표자명<span className={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              name="ceoName"
+              value={formData.ceoName}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="대표자명"
+              required
+            />
+          </div>
+          
+          {/* 주소 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              주소<span className={styles.required}>*</span>
+            </label>
+            <div className={styles.inputWrapper}>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                readOnly
+                className={styles.input}
+                placeholder="주소"
+                required
+              />
+              <button
+                type="button"
+                onClick={handleSearchAddress}
+                className={styles.addressButton}
+              >
+                주소 검색
+              </button>
+            </div>
+          </div>
+          
+          {/* 전화번호 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>전화번호</label>
+            <input
+              type="text"
+              name="tel"
+              value={formData.tel}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="02-0000-0000 또는 000-0000-0000"
+            />
+          </div>
+          
+          {/* 이메일 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>이메일</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="email@example.com"
+            />
+          </div>
+          
+          {/* 거래처 유형 */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>거래처 유형</label>
+            <select
+              name="clientType"
+              value={formData.clientType}
+              onChange={handleChange}
+              className={styles.select}
+            >
+              <option value="매출">매출</option>
+              <option value="매입">매입</option>
+              <option value="양방">양방</option>
+            </select>
+          </div>
+          
+          {/* 버튼 */}
+          <div className={styles.buttonGroup}>
+            <button
+              type="submit"
+              disabled={loading || (!isEdit && !isCodeChecked)}
+              className={styles.submitButton}
+            >
+              {loading ? '저장 중...' : isEdit ? '수정' : '등록'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelButton}
+            >
+              취소
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default ClientModal;

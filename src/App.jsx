@@ -16,6 +16,7 @@ import GeneralVoucher from './pages/voucher/GeneralVoucher'
 import SalesPurchaseVoucher from './pages/voucher/SalesPurchaseVoucher'
 import CompanySearch from './pages/Company/CompanySearch'
 import BusinessCompanyManage from './pages/MyPage/BusinessCompanyManage'
+import ClientManage from './pages/Client/ClientManage'
 
 function App() {
   
@@ -37,6 +38,9 @@ function App() {
           <Route path="mypage/company/manage" element={<CompanyManage />} />
           <Route path="mypage/company/business-manage" element={<BusinessCompanyManage />} />
           
+          {/* 거래처 관리 - 추가! */}
+          <Route path="clients/manage" element={<ClientManage />} />
+  
                     
           {/* 전표 */}
           <Route path="voucher/general" element={<GeneralVoucher />} />

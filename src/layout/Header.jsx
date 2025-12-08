@@ -9,34 +9,40 @@ function Header() {
   const [currentCompany, setCurrentCompany] = useState(null);
   
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('user') || 'null');
-    setUser(userData);
+  const userData = JSON.parse(localStorage.getItem('user') || 'null');
+  setUser(userData);
+  
+  // 작업 중인 회사 정보 가져오기
+  if (userData && userData.companyId) {
     
-    // 작업 중인 회사 정보 가져오기
-    if (userData && userData.companyId) {
-      let companyName = localStorage.getItem('currentCompanyName');
-        // localStorage에 없으면 API로 가져오기
-      if (!companyName) {
-        fetch(`/api/companies/${userData.companyId}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.company) {
-            localStorage.setItem('currentCompanyName', data.company.companyName);
-            setCurrentCompany(data.company.companyName);
-          }
-        })
-        .catch(err => console.error(err));
-      } else {
-        setCurrentCompany(companyName);
-      }
+    const companyName = localStorage.getItem('currentCompanyName');
+    
+    if (companyName) {
+      setCurrentCompany(companyName);
     } else {
-      setCurrentCompany(null);
+      fetch(`/api/companies/${userData.companyId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      .then(r => {
+        return r.json();
+      })
+      .then(data => {
+        if (data.company) {
+          localStorage.setItem('currentCompanyName', data.company.companyName);
+          setCurrentCompany(data.company.companyName);
+        }
+      })
+      .catch(err => {
+        setCurrentCompany(null);
+      });
     }
-  }, [location]);
+  } else {
+    localStorage.removeItem('currentCompanyName');
+    setCurrentCompany(null);
+  }
+}, [location]);
   
 
   const handleLogout = () => {

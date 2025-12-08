@@ -128,3 +128,19 @@ export const getRejectedEmployees = async (companyId) => {
   
   return response.data;
 };
+
+// 직원 역할 변경
+export const updateEmployeeRole = async (companyUserId, newRole) => {
+  const token = localStorage.getItem('token');
+  
+  const response = await axios.put(`${BASE_URL}/update-employee-role`, 
+    { companyUserId, newRole },
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  );
+  
+  return response.data;
+};

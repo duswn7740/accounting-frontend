@@ -1,3 +1,36 @@
+.container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 24px;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.createButton {
+  padding: 10px 20px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.createButton:hover {
+  background-color: #229954;
+}
+
 /* 탭 메뉴 */
 .tabs {
   display: flex;
@@ -27,6 +60,7 @@
   font-weight: bold;
 }
 
+/* 탭 컨텐츠 */
 .tabContent {
   margin-top: 20px;
 }
@@ -39,16 +73,17 @@
   border-radius: 8px;
 }
 
-.employeeList {
+/* 거래처 목록 */
+.clientList {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.employeeCard {
+.clientCard {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -56,15 +91,15 @@
   transition: box-shadow 0.2s;
 }
 
-.employeeCard:hover {
+.clientCard:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.employeeInfo {
+.clientInfo {
   flex: 1;
 }
 
-.employeeName {
+.clientName {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
@@ -74,102 +109,50 @@
   gap: 10px;
 }
 
-.roleBadge {
-  display: inline-block;
-  padding: 4px 10px;
-  background-color: #3498db;
-  color: white;
-  font-size: 12px;
-  border-radius: 12px;
+.clientCode {
+  font-size: 14px;
+  color: #7f8c8d;
   font-weight: normal;
 }
 
-.employeeDetail {
+.clientDetail {
   font-size: 14px;
   color: #7f8c8d;
   margin: 5px 0;
 }
 
+/* 액션 버튼 */
 .actionButtons {
   display: flex;
   gap: 10px;
 }
 
-.approveButton {
-  padding: 10px 20px;
-  background-color: #27ae60;
+.editButton {
+  padding: 8px 16px;
+  background-color: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  white-space: nowrap;
   transition: background-color 0.2s;
 }
 
-.approveButton:hover {
-  background-color: #229954;
+.editButton:hover {
+  background-color: #2980b9;
 }
 
-.approveButton:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
-.rejectButton {
-  padding: 10px 20px;
+.deleteButton {
+  padding: 8px 16px;
   background-color: #e74c3c;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  white-space: nowrap;
   transition: background-color 0.2s;
 }
 
-.rejectButton:hover {
+.deleteButton:hover {
   background-color: #c0392b;
-}
-
-.rejectButton:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
-.roleSection {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.roleLabel {
-  font-size: 14px;
-  font-weight: bold;
-  color: #34495e;
-}
-
-.roleSelect {
-  padding: 6px 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.roleSelect:hover {
-  border-color: #3498db;
-}
-
-.roleSelect:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.roleSelect:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
 }

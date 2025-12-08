@@ -36,6 +36,8 @@ function CompanyManage() {
   
   // 작업 회사 선택
   const handleSelectCompany = (company) => {
+    localStorage.setItem('companyId', company.companyId);
+    localStorage.setItem('currentCompanyName', company.companyName);
   const user = JSON.parse(localStorage.getItem('user'));
     user.companyId = company.companyId;
     user.hasCompany = true;
