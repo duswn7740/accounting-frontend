@@ -17,6 +17,7 @@ import SalesPurchaseVoucher from './pages/voucher/SalesPurchaseVoucher'
 import CompanySearch from './pages/Company/CompanySearch'
 import BusinessCompanyManage from './pages/MyPage/BusinessCompanyManage'
 import ClientManage from './pages/Client/ClientManage'
+import AccountManage from './pages/Account/AccountManage'
 
 function App() {
   
@@ -40,6 +41,7 @@ function App() {
           
           {/* 거래처 관리 - 추가! */}
           <Route path="clients/manage" element={<ClientManage />} />
+          <Route path="accounts/manage" element={<AccountManage />} /> 
   
                     
           {/* 전표 */}

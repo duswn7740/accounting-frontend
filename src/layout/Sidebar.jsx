@@ -54,7 +54,7 @@ function Sidebar() {
           
           <li className={styles.menuTitle}>마스터 데이터</li>
           <li>
-            <NavLink to="/accounts">계정과목 관리</NavLink>
+            <NavLink to="/accounts/manage">계정과목 관리</NavLink>
           </li>
           <li>
             <NavLink to="/clients/manage">거래처 관리</NavLink>
