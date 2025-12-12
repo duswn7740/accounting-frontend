@@ -3,13 +3,15 @@ import * as clientApi from '@/api/clientApi';
 import { formatBusinessNumber, formatCompanyTel } from '@/utils/companyValidate';
 import styles from './ClientModal.module.css';
 
-function ClientModal({ client, category, companyId, onClose, onSuccess }) {
+function ClientModal({ client, companyId, onClose, onSuccess }) {
   const isEdit = !!client;
-  
+
   const [formData, setFormData] = useState({
+    category: '일반',
     clientCode: '',
     clientName: '',
     businessNumber: '',
+    accountNumber: '',
     ceoName: '',
     address: '',
     tel: '',
@@ -24,9 +26,11 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
   useEffect(() => {
     if (client) {
       setFormData({
+        category: client.category || '일반',
         clientCode: client.client_code || '',
         clientName: client.client_name || '',
         businessNumber: client.business_number || '',
+        accountNumber: client.account_number || '',
         ceoName: client.ceo_name || '',
         address: client.address || '',
         tel: client.tel || '',
@@ -41,21 +45,34 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newValue = value;
-    
+
+    if (name === 'category') {
+      // 카테고리 변경 시 코드 체크 초기화 및 번호 필드 초기화
+      setIsCodeChecked(false);
+      setFormData({
+        ...formData,
+        [name]: newValue,
+        clientCode: '', // 코드도 초기화
+        businessNumber: '', // 사업자번호 초기화
+        accountNumber: '' // 계좌/카드번호 초기화
+      });
+      return;
+    }
+
     if (name === 'clientCode') {
       // 숫자만 입력, 5자리까지
       newValue = value.replace(/\D/g, '').slice(0, 5);
       setIsCodeChecked(false); // 코드 변경 시 체크 초기화
     }
-    
+
     if (name === 'businessNumber') {
       newValue = formatBusinessNumber(value);
     }
-    
+
     if (name === 'tel') {
       newValue = formatCompanyTel(value);
     }
-    
+
     setFormData({
       ...formData,
       [name]: newValue
@@ -76,9 +93,9 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
     
     try {
       const result = await clientApi.checkClientCode(
-        companyId, 
+        companyId,
         formData.clientCode,
-        category
+        formData.category
       );
       
       if (result.available) {
@@ -98,7 +115,7 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
   // 자동 생성
   const handleAutoGenerate = async () => {
     try {
-      const result = await clientApi.getNextClientCode(companyId, category);
+      const result = await clientApi.getNextClientCode(companyId, formData.category);
       
       setFormData({
         ...formData,
@@ -137,17 +154,25 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
       alert('거래처명을 입력해주세요');
       return;
     }
-    
-    if (!formData.businessNumber.trim()) {
-      alert('사업자번호를 입력해주세요');
-      return;
+
+    // 카테고리별 필수 항목 체크
+    if (formData.category === '일반') {
+      if (!formData.businessNumber.trim()) {
+        alert('사업자번호를 입력해주세요');
+        return;
+      }
+    } else if (formData.category === '은행' || formData.category === '카드') {
+      if (!formData.accountNumber.trim()) {
+        alert(formData.category === '은행' ? '계좌번호를 입력해주세요' : '카드번호를 입력해주세요');
+        return;
+      }
     }
-    
+
     if (!formData.ceoName.trim()) {
       alert('대표자명을 입력해주세요');
       return;
     }
-    
+
     if (!formData.address.trim()) {
       alert('주소를 입력해주세요');
       return;
@@ -163,10 +188,11 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
       
       const submitData = {
         companyId,
-        category,
+        category: formData.category,
         clientCode: formData.clientCode,
         clientName: formData.clientName,
         businessNumber: formData.businessNumber.replace(/\D/g, ''),
+        accountNumber: formData.accountNumber.replace(/\D/g, ''),
         ceoName: formData.ceoName,
         address: formData.address,
         tel: formData.tel.replace(/\D/g, ''),
@@ -192,17 +218,37 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
   };
   
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={(e) => e.stopPropagation()}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
             {isEdit ? '거래처 수정' : '거래처 등록'}
-            <span className={styles.categoryBadge}>{category}</span>
           </h2>
           <button onClick={onClose} className={styles.closeButton}>✕</button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className={styles.form}>
+          {/* 거래처 유형 (일반/은행/카드) */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              거래처 유형<span className={styles.required}>*</span>
+            </label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className={styles.select}
+              disabled={isEdit}
+            >
+              <option value="일반">일반</option>
+              <option value="은행">은행</option>
+              <option value="카드">카드</option>
+            </select>
+            {isEdit && (
+              <p className={styles.infoMessage}>수정 모드에서는 유형을 변경할 수 없습니다</p>
+            )}
+          </div>
+
           {/* 거래처 코드 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
@@ -266,21 +312,57 @@ function ClientModal({ client, category, companyId, onClose, onSuccess }) {
             />
           </div>
           
-          {/* 사업자번호 */}
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              사업자번호<span className={styles.required}>*</span>
-            </label>
-            <input
-              type="text"
-              name="businessNumber"
-              value={formData.businessNumber}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="000-00-00000"
-              required
-            />
-          </div>
+          {/* 일반: 사업자번호 / 은행: 계좌번호 / 카드: 카드번호 */}
+          {formData.category === '일반' && (
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                사업자번호<span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="businessNumber"
+                value={formData.businessNumber}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="000-00-00000"
+                required
+              />
+            </div>
+          )}
+
+          {formData.category === '은행' && (
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                계좌번호<span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="accountNumber"
+                value={formData.accountNumber}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="계좌번호를 입력하세요"
+                required
+              />
+            </div>
+          )}
+
+          {formData.category === '카드' && (
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                카드번호<span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="accountNumber"
+                value={formData.accountNumber}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="카드번호를 입력하세요"
+                required
+              />
+            </div>
+          )}
           
           {/* 대표자명 */}
           <div className={styles.formGroup}>

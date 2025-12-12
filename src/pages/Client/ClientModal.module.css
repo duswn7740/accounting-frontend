@@ -216,3 +216,16 @@
   font-size: 13px;
   margin-top: 5px;
 }
+
+.infoMessage {
+  color: #7f8c8d;
+  font-size: 13px;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.select:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  color: #7f8c8d;
+}

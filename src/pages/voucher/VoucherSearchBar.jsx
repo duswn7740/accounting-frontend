@@ -1,0 +1,163 @@
+import { useState, useEffect } from 'react';
+import styles from './VoucherSearchBar.module.css';
+
+const STORAGE_KEY = 'voucherSearchCondition';
+
+function VoucherSearchBar({ searchType, setSearchType, onSearch }) {
+  const today = new Date();
+  const [formData, setFormData] = useState({
+    year: today.getFullYear(),
+    startMonth: '',
+    startDay: '',
+    endMonth: '',
+    endDay: ''
+  });
+
+  // 컴포넌트 마운트 시 localStorage에서 조회조건 불러오기
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const savedData = JSON.parse(saved);
+        setFormData(savedData.formData);
+        setSearchType(savedData.searchType);
+        // 자동으로 조회
+        const { startDate, endDate } = savedData;
+        if (startDate && endDate) {
+          onSearch(startDate, endDate);
+        }
+      } catch (error) {
+        console.error('조회조건 불러오기 실패:', error);
+      }
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSearch = () => {
+    let startDate, endDate;
+
+    if (searchType === 'date') {
+      // 날짜 조회
+      if (formData.startDay) {
+        // 특정 일자
+        startDate = `${formData.year}-${String(formData.startMonth).padStart(2, '0')}-${String(formData.startDay).padStart(2, '0')}`;
+        endDate = startDate;
+      } else {
+        // 월 전체
+        startDate = `${formData.year}-${String(formData.startMonth).padStart(2, '0')}-01`;
+        const lastDay = new Date(formData.year, formData.startMonth, 0).getDate();
+        endDate = `${formData.year}-${String(formData.startMonth).padStart(2, '0')}-${lastDay}`;
+      }
+    } else {
+      // 기간 조회 (월/월)
+      startDate = `${formData.year}-${String(formData.startMonth).padStart(2, '0')}-01`;
+      const lastDay = new Date(formData.year, formData.endMonth, 0).getDate();
+      endDate = `${formData.year}-${String(formData.endMonth).padStart(2, '0')}-${lastDay}`;
+    }
+
+    // localStorage에 조회조건 저장
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      formData,
+      searchType,
+      startDate,
+      endDate
+    }));
+
+    onSearch(startDate, endDate);
+  };
+
+  return (
+    <div className={styles.searchBar}>
+      <div className={styles.searchType}>
+        <label>
+          <input
+            type="radio"
+            name="searchType"
+            value="date"
+            checked={searchType === 'date'}
+            onChange={() => setSearchType('date')}
+          />
+          날짜
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="searchType"
+            value="period"
+            checked={searchType === 'period'}
+            onChange={() => setSearchType('period')}
+          />
+          기간
+        </label>
+      </div>
+
+      <div className={styles.dateInputs}>
+        <input
+          type="text"
+          name="year"
+          value={formData.year}
+          onChange={handleChange}
+          className={styles.yearInput}
+          placeholder="년"
+        />
+        년
+
+        <input
+          type="text"
+          name="startMonth"
+          value={formData.startMonth}
+          onChange={handleChange}
+          className={styles.monthInput}
+          placeholder="월"
+        />
+        <p>월</p>
+
+        {searchType === 'date' && (
+          <>
+            <input
+              type="text"
+              name="startDay"
+              value={formData.startDay}
+              onChange={handleChange}
+              className={styles.dayInput}
+              placeholder="일"
+            />
+            <p>일</p> 
+          </>
+        )}
+
+        {searchType === 'period' && (
+          <>
+            <p>부터</p>
+            <input
+              type="text"
+              name="endMonth"
+              value={formData.endMonth}
+              onChange={handleChange}
+              className={styles.monthInput}
+              placeholder="월"
+            />
+            <p>월 까지</p>
+          </>
+        )}
+
+        <button
+          className={styles.searchButton}
+          onClick={handleSearch}
+          data-search-bar
+        >
+          조회
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default VoucherSearchBar;

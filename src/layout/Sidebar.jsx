@@ -46,7 +46,7 @@ function Sidebar() {
           
           <li className={styles.menuTitle}>전표 입력</li>
           <li>
-            <NavLink to="/voucher/general">일반전표</NavLink>
+            <NavLink to="/voucher/entry">일반전표</NavLink>
           </li>
           <li>
             <NavLink to="/voucher/sales-purchase">매입매출전표</NavLink>

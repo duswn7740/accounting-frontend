@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as clientApi from '@/api/clientApi';
 import { formatBusinessNumber } from '@/utils/companyValidate';
@@ -13,6 +13,7 @@ function ClientManage() {
   const [activeTab, setActiveTab] = useState('일반');
   
   const [clients, setClients] = useState([]);
+  const [allClients, setAllClients] = useState([]); // 전체 거래처 (탭 카운트용)
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
@@ -36,8 +37,33 @@ function ClientManage() {
     setUserRole(user.userType === 'BUSINESS' ? 'ADMIN' : 'ACCOUNTANT');
     
   }, [nav]);
-  
-  // 거래처 목록 조회
+
+  // 전체 거래처 조회 (탭 카운트용)
+  useEffect(() => {
+    if (!currentCompany) return;
+
+    const fetchAllClients = async () => {
+      try {
+        const response = await clientApi.getClientsByCompany(currentCompany.companyId);
+        setAllClients(response.clients);
+      } catch (err) {
+        console.error('전체 거래처 조회 실패:', err);
+      }
+    };
+
+    fetchAllClients();
+  }, [currentCompany]);
+
+  // 탭 카운트 계산 (allClients가 변경될 때만 재계산)
+  const tabCounts = useMemo(() => {
+    return {
+      일반: allClients.filter(c => c.category === '일반').length,
+      은행: allClients.filter(c => c.category === '은행').length,
+      카드: allClients.filter(c => c.category === '카드').length
+    };
+  }, [allClients]);
+
+  // 카테고리별 거래처 목록 조회
   useEffect(() => {
     if (!currentCompany) return;
     
@@ -78,8 +104,12 @@ function ClientManage() {
       alert('삭제되었습니다');
       
       // 목록 새로고침
-      const response = await clientApi.getClientsByCategory(currentCompany.companyId, activeTab);
-      setClients(response.clients);
+      const [categoryResponse, allResponse] = await Promise.all([
+        clientApi.getClientsByCategory(currentCompany.companyId, activeTab),
+        clientApi.getClientsByCompany(currentCompany.companyId)
+      ]);
+      setClients(categoryResponse.clients);
+      setAllClients(allResponse.clients);
       
     } catch (err) {
       alert(err.response?.data?.error || '삭제 실패');
@@ -116,19 +146,19 @@ function ClientManage() {
           onClick={() => setActiveTab('일반')}
           className={`${styles.tab} ${activeTab === '일반' ? styles.activeTab : ''}`}
         >
-          일반 거래처 ({clients.filter(c => c.category === '일반').length})
+          일반 거래처 ({tabCounts.일반})
         </button>
         <button
           onClick={() => setActiveTab('은행')}
           className={`${styles.tab} ${activeTab === '은행' ? styles.activeTab : ''}`}
         >
-          은행 ({clients.filter(c => c.category === '은행').length})
+          은행 ({tabCounts.은행})
         </button>
         <button
           onClick={() => setActiveTab('카드')}
           className={`${styles.tab} ${activeTab === '카드' ? styles.activeTab : ''}`}
         >
-          카드 ({clients.filter(c => c.category === '카드').length})
+          카드 ({tabCounts.카드})
         </button>
       </div>
       
@@ -149,9 +179,19 @@ function ClientManage() {
                     {client.client_name}
                     <span className={styles.clientCode}>[{client.client_code}]</span>
                   </h3>
-                  {client.business_number && (
+                  {client.category === '일반' && client.business_number && (
                     <p className={styles.clientDetail}>
                       사업자번호: {formatBusinessNumber(client.business_number)}
+                    </p>
+                  )}
+                  {client.category === '은행' && client.account_number && (
+                    <p className={styles.clientDetail}>
+                      계좌번호: {client.account_number}
+                    </p>
+                  )}
+                  {client.category === '카드' && client.account_number && (
+                    <p className={styles.clientDetail}>
+                      카드번호: {client.account_number}
                     </p>
                   )}
                   {client.ceo_name && (
@@ -199,13 +239,16 @@ function ClientManage() {
       {showModal && (
         <ClientModal
           client={editingClient}
-          category={activeTab}
           companyId={currentCompany.companyId}
           onClose={() => setShowModal(false)}
           onSuccess={async () => {
             setShowModal(false);
-            const response = await clientApi.getClientsByCategory(currentCompany.companyId, activeTab);
-            setClients(response.clients);
+            const [categoryResponse, allResponse] = await Promise.all([
+              clientApi.getClientsByCategory(currentCompany.companyId, activeTab),
+              clientApi.getClientsByCompany(currentCompany.companyId)
+            ]);
+            setClients(categoryResponse.clients);
+            setAllClients(allResponse.clients);
           }}
         />
       )}

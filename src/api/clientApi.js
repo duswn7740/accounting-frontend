@@ -2,6 +2,18 @@ import axios from 'axios';
 
 const BASE_URL = '/api/clients';
 
+// 회사별 거래처 조회
+export const getClientsByCompany = async (companyId) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.get(BASE_URL, {
+    params: { companyId },
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};
+
 // 거래처 등록
 export const createClient = async (clientData) => {
   const token = localStorage.getItem('token');

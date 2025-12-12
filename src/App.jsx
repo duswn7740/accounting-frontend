@@ -12,12 +12,12 @@ import Login from './pages/auth/Login'
 import CompanyManage from './pages/MyPage/CompanyManage'
 import Profile from './pages/MyPage/Profile'
 import CompanyRegister from './pages/Company/CompanyRegister'
-import GeneralVoucher from './pages/voucher/GeneralVoucher'
-import SalesPurchaseVoucher from './pages/voucher/SalesPurchaseVoucher'
+import SalesPurchaseVoucher from './pages/Voucher/SalesPurchaseVoucher'
 import CompanySearch from './pages/Company/CompanySearch'
 import BusinessCompanyManage from './pages/MyPage/BusinessCompanyManage'
 import ClientManage from './pages/Client/ClientManage'
 import AccountManage from './pages/Account/AccountManage'
+import VoucherEntry from './pages/Voucher/VoucherEntry'
 
 function App() {
   
@@ -45,7 +45,7 @@ function App() {
   
                     
           {/* 전표 */}
-          <Route path="voucher/general" element={<GeneralVoucher />} />
+          <Route path="voucher/entry" element={<VoucherEntry />} />
           <Route path="voucher/sales-purchase" element={<SalesPurchaseVoucher />} />
         </Route>
       </Routes>

@@ -113,7 +113,7 @@ function AccountModal({ account, onClose }) {
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={() => onClose(false)}>
+    <div className={styles.modalOverlay} onClick={(e) => e.stopPropagation()}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h3>{account ? '계정과목 수정' : '계정과목 추가'}</h3>

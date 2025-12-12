@@ -1,0 +1,75 @@
+.searchBar {
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.searchType {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.searchType label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.searchType input[type="radio"] {
+  cursor: pointer;
+}
+
+.dateInputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.yearInput {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.monthInput,
+.dayInput {
+  width: 60px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.yearInput:focus,
+.monthInput:focus,
+.dayInput:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.searchButton {
+  padding: 8px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.searchButton:hover {
+  background-color: #2980b9;
+}
