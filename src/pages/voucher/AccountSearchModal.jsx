@@ -5,7 +5,6 @@ import styles from './SearchModal.module.css';
 function AccountSearchModal({ onSelect, onClose }) {
   const [accounts, setAccounts] = useState([]);
   const [filteredAccounts, setFilteredAccounts] = useState([]);
-  const [searchType, setSearchType] = useState('code'); // code | name
   const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
@@ -14,7 +13,7 @@ function AccountSearchModal({ onSelect, onClose }) {
 
   useEffect(() => {
     handleSearch();
-  }, [searchKeyword, searchType, accounts]);
+  }, [searchKeyword, accounts]);
 
   const fetchAccounts = async () => {
     try {
@@ -35,11 +34,9 @@ function AccountSearchModal({ onSelect, onClose }) {
 
     const keyword = searchKeyword.toLowerCase();
     const filtered = accounts.filter(account => {
-      if (searchType === 'code') {
-        return account.account_code.toLowerCase().includes(keyword);
-      } else {
-        return account.account_name.toLowerCase().includes(keyword);
-      }
+      // 코드 또는 이름 둘 다 검색
+      return account.account_code.toLowerCase().includes(keyword) ||
+             account.account_name.toLowerCase().includes(keyword);
     });
 
     setFilteredAccounts(filtered);
@@ -58,35 +55,12 @@ function AccountSearchModal({ onSelect, onClose }) {
         </div>
 
         <div className={styles.searchSection}>
-          <div className={styles.searchType}>
-            <label>
-              <input
-                type="radio"
-                name="searchType"
-                value="code"
-                checked={searchType === 'code'}
-                onChange={() => setSearchType('code')}
-              />
-              코드 검색
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="searchType"
-                value="name"
-                checked={searchType === 'name'}
-                onChange={() => setSearchType('name')}
-              />
-              계정과목 검색
-            </label>
-          </div>
-
           <div className={styles.searchInput}>
             <input
               type="text"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
-              placeholder="검색어 입력"
+              placeholder="계정과목 코드 또는 계정과목 이름 검색"
               autoFocus
             />
           </div>

@@ -1,0 +1,196 @@
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.createButton {
+  padding: 12px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.createButton:hover {
+  background: #218838;
+}
+
+/* 필터 섹션 */
+.filterSection {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dateFilter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+.input {
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.dateSeparator {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.searchButton {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.searchButton:hover {
+  background: #0056b3;
+}
+
+/* 테이블 */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.table th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  font-size: 13px;
+}
+
+.clickableRow {
+  cursor: pointer;
+}
+
+.clickableRow:hover {
+  background: #f8f9fa;
+}
+
+.amount {
+  text-align: right;
+  font-weight: 500;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.매출 {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge.매입 {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge.면세매출 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge.면세매입 {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge.불공 {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.statusBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusBadge.확정 {
+  background: #d4edda;
+  color: #155724;
+}
+
+.statusBadge.임시저장 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.deleteButton {
+  padding: 6px 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.deleteButton:hover {
+  background: #c82333;
+}
+
+.emptyState {
+  padding: 60px 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.emptyState p {
+  font-size: 16px;
+  margin: 0;
+}

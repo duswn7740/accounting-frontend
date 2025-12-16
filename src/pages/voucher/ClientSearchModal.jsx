@@ -6,7 +6,6 @@ import styles from './SearchModal.module.css';
 function ClientSearchModal({ onSelect, onClose }) {
   const [clients, setClients] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [searchType, setSearchType] = useState('code'); // code | name | businessNumber
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showClientModal, setShowClientModal] = useState(false);
 
@@ -16,7 +15,7 @@ function ClientSearchModal({ onSelect, onClose }) {
 
   useEffect(() => {
     handleSearch();
-  }, [searchKeyword, searchType, clients]);
+  }, [searchKeyword, clients]);
 
   const fetchClients = async () => {
     try {
@@ -37,13 +36,12 @@ function ClientSearchModal({ onSelect, onClose }) {
 
     const keyword = searchKeyword.toLowerCase();
     const filtered = clients.filter(client => {
-      if (searchType === 'code') {
-        return client.client_code.toLowerCase().includes(keyword);
-      } else if (searchType === 'name') {
-        return client.client_name.toLowerCase().includes(keyword);
-      } else {
-        return client.business_number?.replace(/-/g, '').includes(keyword.replace(/-/g, ''));
-      }
+      // 코드, 이름, 사업자번호 모두 검색
+      const codeMatch = client.client_code.toLowerCase().includes(keyword);
+      const nameMatch = client.client_name.toLowerCase().includes(keyword);
+      const businessNumberMatch = client.business_number?.replace(/-/g, '').includes(keyword.replace(/-/g, ''));
+
+      return codeMatch || nameMatch || businessNumberMatch;
     });
 
     setFilteredClients(filtered);
@@ -68,45 +66,13 @@ function ClientSearchModal({ onSelect, onClose }) {
           </div>
 
           <div className={styles.searchSection}>
-            <div className={styles.searchType}>
-              <label>
-                <input
-                  type="radio"
-                  name="searchType"
-                  value="code"
-                  checked={searchType === 'code'}
-                  onChange={() => setSearchType('code')}
-                />
-                코드 검색
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="searchType"
-                  value="name"
-                  checked={searchType === 'name'}
-                  onChange={() => setSearchType('name')}
-                />
-                거래처명 검색
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="searchType"
-                  value="businessNumber"
-                  checked={searchType === 'businessNumber'}
-                  onChange={() => setSearchType('businessNumber')}
-                />
-                사업자번호 검색
-              </label>
-            </div>
-
             <div className={styles.searchInput}>
               <input
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="검색어 입력"
+                placeholder="거래처 코드, 거래처명 또는 사업자번호 검색"
+                autoFocus
               />
             </div>
           </div>

@@ -18,6 +18,7 @@ import BusinessCompanyManage from './pages/MyPage/BusinessCompanyManage'
 import ClientManage from './pages/Client/ClientManage'
 import AccountManage from './pages/Account/AccountManage'
 import VoucherEntry from './pages/Voucher/VoucherEntry'
+import SalesPurchaseEntry from './pages/SalesPurchase/SalesPurchaseEntry'
 
 function App() {
   
@@ -39,14 +40,14 @@ function App() {
           <Route path="mypage/company/manage" element={<CompanyManage />} />
           <Route path="mypage/company/business-manage" element={<BusinessCompanyManage />} />
           
-          {/* 거래처 관리 - 추가! */}
+          {/* 거래처 관리 */}
           <Route path="clients/manage" element={<ClientManage />} />
           <Route path="accounts/manage" element={<AccountManage />} /> 
   
                     
           {/* 전표 */}
           <Route path="voucher/entry" element={<VoucherEntry />} />
-          <Route path="voucher/sales-purchase" element={<SalesPurchaseVoucher />} />
+          <Route path="voucher/sales-purchase" element={<SalesPurchaseEntry />} />
         </Route>
       </Routes>
     </>

@@ -1,0 +1,323 @@
+.tableWrapper {
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  height: 620px;
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1400px;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table th {
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #34495e;
+  text-align: center;
+  font-size: 14px;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table td:first-child, .table td:nth-child(2), .table td:nth-child(12), .table td:nth-child(13) {
+  width: 50px;
+}
+
+.table td:nth-child(3), .table td:nth-child(4), .table td:nth-child(5) {
+  width: 60px;
+}
+
+.table td:nth-child(6) {
+  width: 120px;
+}
+
+.table td:nth-child(7) {
+  width: 90px;
+}
+
+.table td:last-child{
+  width: 80px;
+}
+
+.newLineRow {
+  background-color: #e3f2fd;
+}
+
+.newLineRow:hover {
+  background-color: #e3f2fd !important;
+}
+
+.input {
+  width: 100%;
+  padding: 6px 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.input[readonly] {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.inputSmall {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.deleteButton,
+.addButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.deleteButton {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #c0392b;
+}
+
+.addButton {
+  background-color: #3498db;
+  color: white;
+}
+
+.addButton:hover {
+  background-color: #2980b9;
+}
+
+/* 차대변 합계 섹션 */
+.totalsSection {
+  padding: 8px 16px;
+  background-color: #e8f4f8;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.totalsSection strong {
+  color: #2c3e50;
+  margin-left: 8px;
+}
+
+.balanced {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.unbalanced {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* 저장된 전표 행 */
+.voucherRow {
+  background-color: #f9f9f9;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.voucherRow:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* 전표 상세 헤더 */
+.detailHeaderRow {
+  background-color: #e8f4f8;
+  font-weight: 600;
+  font-size: 12px;
+  color: #2c3e50;
+}
+
+.detailHeaderRow td {
+  padding: 8px;
+  border-bottom: 1px solid #b0d4e0;
+}
+
+/* 전표 상세 라인 */
+.detailLine {
+  background-color: #f1f1f1;
+  font-size: 13px;
+  color: #555;
+}
+
+.detailLine:hover {
+  background-color: #d2d2d2 !important;
+}
+
+.detailLine td:first-child {
+  padding-left: 24px;
+}
+
+/* 차대변 합계 행 */
+.totalsRow {
+  background-color: #e8f4f8;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.totalsRow td {
+  padding: 12px;
+  border-top: 2px solid #3498db;
+  border-bottom: 1px solid #9ec5fe;
+}
+
+/* 입력칸 헤더 */
+.inputHeaderRow {
+  background-color: #cfe2ff;
+  font-weight: 600;
+  font-size: 12px;
+  color: #084298;
+}
+
+.inputHeaderRow td {
+  padding: 8px;
+  border-bottom: 1px solid #9ec5fe;
+}
+
+/* 임시 라인 헤더 */
+.tempHeaderRow {
+  background-color: #fff3cd;
+  font-weight: 600;
+  font-size: 12px;
+  color: #856404;
+}
+
+.tempHeaderRow td {
+  padding: 8px;
+  border-bottom: 1px solid #ffc107;
+}
+
+/* 임시 라인 */
+.tempLine {
+  background-color: #fff9c4;
+}
+
+.tempLine:hover {
+  background-color: #fff59d !important;
+}
+
+/* 구분선 */
+.separator td {
+  padding: 0 !important;
+  height: 8px;
+  background-color: #ecf0f1;
+}
+
+/* 액션 버튼들 */
+.actionButtons {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  border-top: 1px solid #e0e0e0;
+}
+
+.saveVoucherButton,
+.cancelButton {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.saveVoucherButton {
+  background-color: #27ae60;
+  color: white;
+}
+
+.saveVoucherButton:hover:not(:disabled) {
+  background-color: #229954;
+}
+
+.saveVoucherButton:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cancelButton {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: #7f8c8d;
+}
+
+/* 전표 유형 뱃지 */
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.매출 {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge.매입 {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge.면세매출 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge.면세매입 {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge.불공 {
+  background: #e2e3e5;
+  color: #383d41;
+}
