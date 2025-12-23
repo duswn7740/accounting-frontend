@@ -19,6 +19,8 @@ import ClientManage from './pages/Client/ClientManage'
 import AccountManage from './pages/Account/AccountManage'
 import VoucherEntry from './pages/Voucher/VoucherEntry'
 import SalesPurchaseEntry from './pages/SalesPurchase/SalesPurchaseEntry'
+import AccountLedger from './pages/Ledger/AccountLedger'
+import ClientLedger from './pages/Ledger/ClientLedger'
 
 function App() {
   
@@ -42,12 +44,16 @@ function App() {
           
           {/* 거래처 관리 */}
           <Route path="clients/manage" element={<ClientManage />} />
-          <Route path="accounts/manage" element={<AccountManage />} /> 
-  
-                    
+          <Route path="accounts/manage" element={<AccountManage />} />
+
+
           {/* 전표 */}
           <Route path="voucher/entry" element={<VoucherEntry />} />
           <Route path="voucher/sales-purchase" element={<SalesPurchaseEntry />} />
+
+          {/* 원장 */}
+          <Route path="ledger/account" element={<AccountLedger />} />
+          <Route path="ledger/client" element={<ClientLedger />} />
         </Route>
       </Routes>
     </>

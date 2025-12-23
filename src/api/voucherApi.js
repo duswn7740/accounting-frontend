@@ -69,3 +69,15 @@ export const updateVoucherWithLines = async (voucherId, voucherData) => {
   });
   return response.data;
 };
+
+// 전표 삭제
+export const deleteVoucher = async (voucherId, companyId) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.delete(`${API_URL}/${voucherId}`, {
+    params: { companyId },
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};

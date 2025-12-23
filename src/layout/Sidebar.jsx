@@ -51,7 +51,15 @@ function Sidebar() {
           <li>
             <NavLink to="/voucher/sales-purchase">매입매출전표</NavLink>
           </li>
-          
+
+          <li className={styles.menuTitle}>원장</li>
+          <li>
+            <NavLink to="/ledger/account">계정별 원장</NavLink>
+          </li>
+          <li>
+            <NavLink to="/ledger/client">거래처별 원장</NavLink>
+          </li>
+
           <li className={styles.menuTitle}>마스터 데이터</li>
           <li>
             <NavLink to="/accounts/manage">계정과목 관리</NavLink>
