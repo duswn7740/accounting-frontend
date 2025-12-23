@@ -408,6 +408,7 @@ function SalesPurchaseTable({ searchDates }) {
       const voucherLines = lines.map(line => ({
         debitCredit: line.debitAmount > 0 ? '차변' : '대변',
         accountId: line.accountId,
+        clientId: line.clientId || null,
         amount: line.debitAmount > 0 ? line.debitAmount : line.creditAmount,
         description: line.description || null,
         descriptionCode: line.descriptionCode || null,
@@ -696,9 +697,9 @@ function SalesPurchaseTable({ searchDates }) {
                           <td>{line.debit_credit}</td>
                           <td>{line.account_code}</td>
                           <td>{line.account_name}</td>
-                          <td>{voucher.client_code || '-'}</td>
-                          <td>{voucher.client_name || '-'}</td>
-                          <td>{formatBusinessNumber(voucher.business_number) || '-'}</td>
+                          <td>{line.client_code || '-'}</td>
+                          <td>{line.client_name || '-'}</td>
+                          <td>{formatBusinessNumber(line.business_number) || '-'}</td>
                           <td className={styles.amount}>
                             {line.debit_credit === '차변' ? Number(line.amount).toLocaleString() : '-'}
                           </td>

@@ -151,13 +151,16 @@ function AccountLedger() {
   const handleStartEdit = (voucher) => {
     const voucherKey = `${voucher.voucher_id}-${voucher.voucher_type}`;
 
+    console.log('handleStartEdit - voucher:', voucher);
+    console.log('handleStartEdit - voucher.lines:', voucher.lines);
+
     // 상세보기가 닫혀있으면 열기
     if (!expandedVouchers.includes(voucherKey)) {
       setExpandedVouchers(prev => [...prev, voucherKey]);
     }
 
     setEditingVoucher(voucherKey);
-    setEditFormData(voucher.lines.map(line => ({
+    const formData = voucher.lines.map(line => ({
       line_no: line.line_no,
       account_code: line.account_code,
       account_name: line.account_name,
@@ -170,7 +173,10 @@ function AccountLedger() {
       isNew: false,
       isDeleted: false,
       originalLineNo: line.line_no
-    })));
+    }));
+
+    console.log('handleStartEdit - formData:', formData);
+    setEditFormData(formData);
   };
 
   const handleCancelEdit = () => {
@@ -210,6 +216,7 @@ function AccountLedger() {
         await addVoucherLine(voucherType, voucherId, {
           line_no: lineData.line_no,
           account_code: lineData.account_code,
+          client_code: lineData.client_code || null,
           debit_credit: lineData.debit_credit,
           amount: lineData.amount,
           description_code: lineData.description_code,
@@ -219,14 +226,18 @@ function AccountLedger() {
 
       // 3. 기존 라인 업데이트
       const updatedLines = editFormData.filter(line => !line.isNew && !line.isDeleted);
+      console.log('handleSaveEdit - updatedLines:', updatedLines);
       for (const lineData of updatedLines) {
-        await updateVoucherLine(voucherType, voucherId, lineData.originalLineNo, {
+        const updateData = {
           account_code: lineData.account_code,
+          client_code: lineData.client_code || null,
           debit_credit: lineData.debit_credit,
           amount: lineData.amount,
           description_code: lineData.description_code,
           description: lineData.description
-        });
+        };
+        console.log('handleSaveEdit - updating line:', lineData.originalLineNo, updateData);
+        await updateVoucherLine(voucherType, voucherId, lineData.originalLineNo, updateData);
       }
 
       alert('전표가 수정되었습니다.');

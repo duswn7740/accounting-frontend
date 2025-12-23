@@ -305,6 +305,14 @@ function ClientLedger() {
     setClientSuggestions([]);
   };
 
+  // 전표 구분 표시
+  const getVoucherTypeLabel = (voucherType) => {
+    if (voucherType === 'general') return '일반';
+    if (voucherType === '매출') return '매출';
+    if (voucherType === '매입') return '매입';
+    return voucherType;
+  };
+
   const handleStartClientKeyDown = (e) => {
     if (e.key === 'F2') {
       e.preventDefault();
@@ -610,7 +618,7 @@ function ClientLedger() {
                     <tr key={idx}>
                       <td>{item.month}</td>
                       <td>{item.day}</td>
-                      <td>{item.voucher_type}</td>
+                      <td>{getVoucherTypeLabel(item.voucher_type)}</td>
                       <td>{item.voucher_no}</td>
                       <td className={styles.amount}>{formatAmount(item.debit_amount)}</td>
                       <td className={styles.amount}>{formatAmount(item.credit_amount)}</td>

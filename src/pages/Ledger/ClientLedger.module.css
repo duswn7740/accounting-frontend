@@ -305,12 +305,12 @@
 /* 상세 테이블 컬럼 너비 */
 .detailSection .table th:nth-child(1),
 .detailSection .table td:nth-child(1) {
-  width: 60px; /* 월 */
+  width: 50px; /* 월 */
 }
 
 .detailSection .table th:nth-child(2),
 .detailSection .table td:nth-child(2) {
-  width: 60px; /* 일 */
+  width: 50px; /* 일 */
 }
 
 .detailSection .table th:nth-child(3),
@@ -320,25 +320,25 @@
 
 .detailSection .table th:nth-child(4),
 .detailSection .table td:nth-child(4) {
-  width: 100px; /* 전표번호 */
+  width: 90px; /* 전표번호 */
 }
 
 .detailSection .table th:nth-child(5),
 .detailSection .table td:nth-child(5) {
-  width: 130px; /* 차변 */
+  width: 120px; /* 차변 */
 }
 
 .detailSection .table th:nth-child(6),
 .detailSection .table td:nth-child(6) {
-  width: 130px; /* 대변 */
+  width: 120px; /* 대변 */
 }
 
 .detailSection .table th:nth-child(7),
 .detailSection .table td:nth-child(7) {
-  width: 130px; /* 잔액 */
+  width: 120px; /* 잔액 */
 }
 
 .detailSection .table th:nth-child(8),
 .detailSection .table td:nth-child(8) {
-  width: auto; /* 적요 */
+  width: 250px; /* 적요 */
 }
