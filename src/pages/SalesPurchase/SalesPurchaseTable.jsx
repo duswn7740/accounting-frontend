@@ -376,9 +376,16 @@ function SalesPurchaseTable({ searchDates }) {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
 
+      // 회계기수 정보에서 연도 가져오기 (UTC 타임존 변환 없이 직접 추출)
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo'));
+      if (!fiscalPeriodInfo) {
+        alert('회계기수 정보를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+        return;
+      }
+      const year = parseInt(fiscalPeriodInfo.startDate.substring(0, 4));
+
       // 첫 번째 라인의 날짜 사용
       const firstLine = lines[0];
-      const year = new Date().getFullYear();
       const month = firstLine.month || new Date().getMonth() + 1;
       const day = firstLine.day || new Date().getDate();
       const voucherDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;

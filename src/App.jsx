@@ -21,6 +21,13 @@ import VoucherEntry from './pages/Voucher/VoucherEntry'
 import SalesPurchaseEntry from './pages/SalesPurchase/SalesPurchaseEntry'
 import AccountLedger from './pages/Ledger/AccountLedger'
 import ClientLedger from './pages/Ledger/ClientLedger'
+import PeriodClosing from './pages/Settings/PeriodClosing'
+import SettlementVoucher from './pages/Settlement/SettlementVoucher'
+import ManufacturingCost from './pages/Settlement/ManufacturingCost'
+import IncomeStatement from './pages/Settlement/IncomeStatement'
+import RetainedEarnings from './pages/Settlement/RetainedEarnings'
+import BalanceSheet from './pages/Settlement/BalanceSheet'
+import TrialBalance from './pages/Settlement/TrialBalance'
 
 function App() {
   
@@ -54,6 +61,18 @@ function App() {
           {/* 원장 */}
           <Route path="ledger/account" element={<AccountLedger />} />
           <Route path="ledger/client" element={<ClientLedger />} />
+          {/* 결산 */}
+          <Route path="settlement/voucher" element={<SettlementVoucher />} />
+          <Route path="settlement/manufacturing-cost" element={<ManufacturingCost />} />
+          <Route path="settlement/income-statement" element={<IncomeStatement />} />
+          <Route path="settlement/retained-earnings" element={<RetainedEarnings />} />
+          <Route path="settlement/balance-sheet" element={<BalanceSheet />} />
+          <Route path="settlement/trial-balance" element={<TrialBalance />} />
+
+
+
+          {/* 설정 */}
+          <Route path="settings/closing" element={<PeriodClosing />} />
         </Route>
       </Routes>
     </>

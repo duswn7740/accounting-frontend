@@ -15,7 +15,8 @@ function CompanyRegister() {
     addressDetail: '',
     tel: '',
     industry: '',
-    fiscalYearEnd: '12-31'
+    fiscalYearEnd: '12-31',
+    openingDate: ''
   });
   
   const [errorMsg, setErrorMsg] = useState({
@@ -264,6 +265,20 @@ function CompanyRegister() {
         </div>
         
         <div className={styles.formGroup}>
+          <label className={styles.label}>
+            개업일<span className={styles.required}>*</span>
+          </label>
+          <input
+            type="date"
+            name="openingDate"
+            value={formData.openingDate}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
           <label className={styles.label}>회계연도 마감일 (MM-DD)</label>
           <input
             type="text"
@@ -277,8 +292,11 @@ function CompanyRegister() {
             className={styles.input}
           />
           <p className={styles.errorMessage}>{errorMsg.fiscalYearEnd}</p>
+          <p className={styles.helperText}>
+            기본값: 12-31 (12월 31일). 학교 등 특수한 경우 회계연도 마감일을 변경할 수 있습니다.
+          </p>
         </div>
-        
+
         <div className={styles.buttonGroup}>
           <button
             type="submit"

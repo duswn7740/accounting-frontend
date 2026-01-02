@@ -11,7 +11,8 @@ export const getAccountLedger = async (companyId, filters) => {
     endMonth: filters.endMonth || undefined,
     endDay: filters.endDay || undefined,
     startAccountCode: filters.startAccountCode || undefined,
-    endAccountCode: filters.endAccountCode || undefined
+    endAccountCode: filters.endAccountCode || undefined,
+    fiscalYear: filters.fiscalYear || undefined
   };
 
   const response = await axios.get(`${API_URL}/account/${companyId}`, {
@@ -32,7 +33,8 @@ export const getAccountSummary = async (companyId, filters) => {
     endMonth: filters.endMonth || undefined,
     endDay: filters.endDay || undefined,
     startAccountCode: filters.startAccountCode || undefined,
-    endAccountCode: filters.endAccountCode || undefined
+    endAccountCode: filters.endAccountCode || undefined,
+    fiscalYear: filters.fiscalYear || undefined
   };
 
   const response = await axios.get(`${API_URL}/account/${companyId}/summary`, {

@@ -68,27 +68,6 @@ function Sidebar() {
             <NavLink to="/clients/manage">거래처 관리</NavLink>
           </li>
 
-          <li className={styles.menuTitle}>결산</li>
-          <li>
-            <NavLink to="/settlement/voucher">결산전표 입력</NavLink>
-          </li>
-          <li>
-            <NavLink to="/settlement/manufacturing-cost">제조원가명세서</NavLink>
-          </li>
-          <li>
-            <NavLink to="/settlement/income-statement">손익계산서</NavLink>
-          </li>
-          <li>
-            <NavLink to="/settlement/retained-earnings">이익잉여금처분계산서</NavLink>
-          </li>
-          <li>
-            <NavLink to="/settlement/balance-sheet">대차대조표</NavLink>
-          </li>
-          <li>
-            <NavLink to="/settlement/trial-balance">합계잔액시산표</NavLink>
-          </li>
-
-
           <li className={styles.menuTitle}>설정</li>
           <li>
             <NavLink to="/settings/closing">마감 후 이월</NavLink>

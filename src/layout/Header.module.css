@@ -17,6 +17,7 @@
   margin: 0;
   font-size: 20px;
   cursor: pointer;
+  color: white;
 }
 
 .headerRight {
@@ -52,4 +53,24 @@
 
 .currentCompany:hover {
   cursor: pointer;
+}
+
+.fiscalPeriodSelect {
+  margin-left: 15px;
+  padding: 5px 10px;
+  background-color: #34495e;
+  color: white;
+  border: 1px solid #3498db;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+.fiscalPeriodSelect:hover {
+  background-color: #3d566e;
+}
+
+.fiscalPeriodSelect:focus {
+  border-color: #2980b9;
 }

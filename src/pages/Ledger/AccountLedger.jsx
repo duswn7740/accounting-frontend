@@ -37,11 +37,15 @@ function AccountLedger() {
   const [suggestionType, setSuggestionType] = useState({});
   const [dropdownPosition, setDropdownPosition] = useState({});
   const inputRefs = useRef({});
+  const [fiscalYearDisplay, setFiscalYearDisplay] = useState('');
 
   const fetchAccountSummary = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      const response = await getAccountSummary(user.companyId, filters);
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+      const fiscalYear = fiscalPeriodInfo.fiscalYear || null;
+
+      const response = await getAccountSummary(user.companyId, { ...filters, fiscalYear });
       setAccountSummary(response.summary || []);
     } catch (error) {
       console.error('계정 요약 조회 실패:', error);
@@ -53,7 +57,10 @@ function AccountLedger() {
   const fetchLedger = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      const response = await getAccountLedger(user.companyId, filters);
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+      const fiscalYear = fiscalPeriodInfo.fiscalYear || null;
+
+      const response = await getAccountLedger(user.companyId, { ...filters, fiscalYear });
       setLedgerData(response.ledger || []);
       setExpandedVouchers([]);
     } catch (error) {
@@ -92,6 +99,13 @@ function AccountLedger() {
   useEffect(() => {
     fetchAccounts();
     fetchClients();
+
+    // localStorage에서 회계기수 정보 가져오기
+    const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+    if (fiscalPeriodInfo.startDate) {
+      const startYear = new Date(fiscalPeriodInfo.startDate).getFullYear();
+      setFiscalYearDisplay(startYear);
+    }
   }, []);
 
   const handleSearch = async () => {
@@ -636,6 +650,14 @@ function AccountLedger() {
             <div className={styles.dateInputs}>
               <input
                 type="text"
+                value={fiscalYearDisplay}
+                readOnly
+                className={styles.yearDisplay}
+                style={{ width: '60px', backgroundColor: '#f5f5f5', textAlign: 'center' }}
+              />
+              <span>년</span>
+              <input
+                type="text"
                 placeholder="월"
                 value={filters.startMonth}
                 onChange={(e) => handleFilterChange('startMonth', e.target.value)}
@@ -778,10 +800,10 @@ function AccountLedger() {
                               onClick={() => handleToggleVoucher(voucherKey)}
                             >
                               <td>{voucher.voucher_date.substring(0, 10)}</td>
-                              <td>{String(voucher.voucher_no).padStart(3, '0')}</td>
-                              <td>{getVoucherTypeLabel(voucher.voucher_type)}</td>
-                              <td>{line.account_code}</td>
-                              <td>{line.account_name}</td>
+                              <td>{voucher.voucher_type === 'carry_forward' ? '' : String(voucher.voucher_no).padStart(3, '0')}</td>
+                              <td>{voucher.voucher_type === 'carry_forward' ? '이월' : getVoucherTypeLabel(voucher.voucher_type)}</td>
+                              <td>{voucher.voucher_type === 'carry_forward' ? '' : line.account_code}</td>
+                              <td>{voucher.voucher_type === 'carry_forward' ? '' : line.account_name}</td>
                               <td>{line.client_code || '-'}</td>
                               <td>{line.client_name || '-'}</td>
                               <td className={styles.amount}>

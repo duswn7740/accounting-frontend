@@ -1,19 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './VoucherSearchBar.module.css';
 
+const STORAGE_KEY = 'voucherSearchCondition';
+
 function VoucherSearchBar({ searchType, setSearchType, onSearch }) {
+  // 회계기수 정보에서 연도 가져오기 (UTC 타임존 변환 없이 직접 추출)
+  const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+  const fiscalYear = fiscalPeriodInfo.startDate ? parseInt(fiscalPeriodInfo.startDate.substring(0, 4)) : new Date().getFullYear();
+
   const [formData, setFormData] = useState({
-    year: (() => {
-      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
-      return fiscalPeriodInfo.startDate
-        ? parseInt(fiscalPeriodInfo.startDate.substring(0, 4))
-        : new Date().getFullYear();
-    })(),
+    year: fiscalYear,
     startMonth: '',
     startDay: '',
     endMonth: '',
     endDay: ''
   });
+
+  // 컴포넌트 마운트 시 localStorage에서 조회조건 불러오기
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const savedData = JSON.parse(saved);
+        setFormData(savedData.formData);
+        setSearchType(savedData.searchType);
+        // 자동으로 조회
+        const { startDate, endDate } = savedData;
+        if (startDate && endDate) {
+          onSearch(startDate, endDate);
+        }
+      } catch (error) {
+        console.error('조회조건 불러오기 실패:', error);
+      }
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,6 +64,14 @@ function VoucherSearchBar({ searchType, setSearchType, onSearch }) {
       const lastDay = new Date(formData.year, formData.endMonth, 0).getDate();
       endDate = `${formData.year}-${String(formData.endMonth).padStart(2, '0')}-${lastDay}`;
     }
+
+    // localStorage에 조회조건 저장
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      formData,
+      searchType,
+      startDate,
+      endDate
+    }));
 
     onSearch(startDate, endDate);
   };

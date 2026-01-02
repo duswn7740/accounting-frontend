@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getVoucherLinesByDate } from '../../api/voucherApi';
+import { getVoucherLinesByFiscalYear } from '../../api/voucherApi';
 import VoucherSearchBar from './VoucherSearchBar';
 import VoucherTable from './VoucherTable';
 import styles from './VoucherEntry.module.css';
@@ -9,11 +9,23 @@ function VoucherEntry() {
   const [searchType, setSearchType] = useState('date'); // date | period
   const [loading, setLoading] = useState(false);
 
-  const fetchVoucherLines = async (startDate, endDate) => {
+  // 회계기수별로 전표 조회
+  const fetchVoucherLines = async () => {
     try {
       setLoading(true);
       const user = JSON.parse(localStorage.getItem('user'));
-      const response = await getVoucherLinesByDate(user.companyId, startDate, endDate);
+      const fiscalYear = parseInt(localStorage.getItem('selectedFiscalYear') || '1');
+
+      if (!fiscalYear) {
+        alert('회계기수를 선택해주세요');
+        return;
+      }
+
+      const response = await getVoucherLinesByFiscalYear(user.companyId, fiscalYear);
+      console.log('[전표 조회] 받은 데이터 샘플 (첫 5개):');
+      response.lines.slice(0, 5).forEach((line, idx) => {
+        console.log(`  [${idx}] voucher_type: ${line.voucher_type}, debit: ${line.debit_amount}, credit: ${line.credit_amount}`);
+      });
       setLines(response.lines);
     } catch (error) {
       alert(error.response?.data?.error || '전표 조회 실패');
@@ -22,9 +34,14 @@ function VoucherEntry() {
     }
   };
 
-  const handleSearch = (startDate, endDate) => {
-    fetchVoucherLines(startDate, endDate);
+  const handleSearch = () => {
+    fetchVoucherLines();
   };
+
+  // 컴포넌트 마운트 시 자동 조회
+  useEffect(() => {
+    fetchVoucherLines();
+  }, []);
 
   const handleLineUpdate = () => {
     // 테이블에서 라인 추가/수정/삭제 후 재조회

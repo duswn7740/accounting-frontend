@@ -28,6 +28,7 @@ function ClientLedger() {
   const [showClientSuggestions, setShowClientSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [activeTab, setActiveTab] = useState('list'); // 'list' or 'detail'
+  const [fiscalYearDisplay, setFiscalYearDisplay] = useState('');
 
   const accountCodeRef = useRef(null);
   const clientCodeRef = useRef(null);
@@ -84,6 +85,13 @@ function ClientLedger() {
   useEffect(() => {
     fetchAccounts();
     fetchClients();
+
+    // localStorage에서 회계기수 정보 가져오기
+    const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+    if (fiscalPeriodInfo.startDate) {
+      const startYear = new Date(fiscalPeriodInfo.startDate).getFullYear();
+      setFiscalYearDisplay(startYear);
+    }
   }, []);
 
   const handleSearch = async () => {
@@ -95,6 +103,8 @@ function ClientLedger() {
 
     try {
       const user = JSON.parse(localStorage.getItem('user'));
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+      const fiscalYear = fiscalPeriodInfo.fiscalYear || null;
 
       // 날짜 처리 로직
       let startMonth = filters.startMonth;
@@ -124,6 +134,11 @@ function ClientLedger() {
         endClientCode: endClientCode
       });
 
+      // fiscalYear가 있으면 추가
+      if (fiscalYear) {
+        queryParams.append('fiscalYear', fiscalYear);
+      }
+
       const response = await fetch(`http://localhost:8000/api/ledger/client?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -147,6 +162,8 @@ function ClientLedger() {
   const fetchLedgerDetail = async (clientId) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+      const fiscalYear = fiscalPeriodInfo.fiscalYear || null;
 
       // 날짜 처리 로직
       let startMonth = filters.startMonth;
@@ -170,6 +187,11 @@ function ClientLedger() {
         accountCode: filters.accountCode,
         clientId: clientId
       });
+
+      // fiscalYear가 있으면 추가
+      if (fiscalYear) {
+        queryParams.append('fiscalYear', fiscalYear);
+      }
 
       const response = await fetch(`http://localhost:8000/api/ledger/client/detail?${queryParams}`, {
         headers: {
@@ -382,6 +404,14 @@ function ClientLedger() {
           <div className={styles.filterGroup}>
             <label>기간</label>
             <div className={styles.dateInputs}>
+              <input
+                type="text"
+                value={fiscalYearDisplay}
+                readOnly
+                className={styles.yearDisplay}
+                style={{ width: '60px', backgroundColor: '#f5f5f5', textAlign: 'center' }}
+              />
+              <span>년</span>
               <input
                 type="text"
                 placeholder="월"

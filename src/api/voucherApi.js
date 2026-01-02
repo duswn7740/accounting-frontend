@@ -2,7 +2,19 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/api/vouchers';
 
-// 전표 라인 조회
+// 전표 라인 조회 (회계기수별)
+export const getVoucherLinesByFiscalYear = async (companyId, fiscalYear) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.get(`${API_URL}/by-fiscal-year`, {
+    params: { companyId, fiscalYear },
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};
+
+// 전표 라인 조회 (날짜별)
 export const getVoucherLinesByDate = async (companyId, startDate, endDate) => {
   const token = localStorage.getItem('token');
   const response = await axios.get(API_URL, {

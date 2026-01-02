@@ -346,7 +346,14 @@ function VoucherTable({ lines, onLineUpdate }) {
     if (balanced && newTempLines.length > 0) {
       try {
         const user = JSON.parse(localStorage.getItem('user'));
-        const year = new Date().getFullYear();
+
+        // 회계기수 정보에서 연도 가져오기 (UTC 타임존 변환 없이 직접 추출)
+        const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo'));
+        if (!fiscalPeriodInfo) {
+          alert('회계기수 정보를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+          return;
+        }
+        const year = parseInt(fiscalPeriodInfo.startDate.substring(0, 4));
 
         const voucherData = {
           companyId: user.companyId,
@@ -490,10 +497,23 @@ function VoucherTable({ lines, onLineUpdate }) {
 
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      const year = new Date().getFullYear();
+
+      // 회계기수 정보에서 연도 가져오기
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo'));
+      if (!fiscalPeriodInfo) {
+        alert('회계기수 정보를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+        return;
+      }
+
+      // UTC 타임존 변환 없이 문자열에서 직접 연도 추출
+      const year = parseInt(fiscalPeriodInfo.startDate.substring(0, 4));
       const month = tempLines[0].month || new Date().getMonth() + 1;
       const day = tempLines[0].day || new Date().getDate();
       const voucherDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+      console.log('회계기수 정보:', fiscalPeriodInfo);
+      console.log('생성된 전표 날짜:', voucherDate);
+      console.log('전표 날짜 상세:', { year, month, day });
 
       const voucherData = {
         companyId: user.companyId,
@@ -551,20 +571,35 @@ function VoucherTable({ lines, onLineUpdate }) {
 
     setEditMode(true);
     setEditingVoucherId(voucherLines[0].voucher_id);
-    setTempLines(voucherLines.map(line => ({
-      month: new Date(line.voucher_date).getMonth() + 1,
-      day: new Date(line.voucher_date).getDate(),
-      voucherType: line.voucher_type,
-      accountCode: line.account_code,
-      accountName: line.account_name,
-      accountId: line.account_id,
-      clientCode: line.client_code || '',
-      clientName: line.client_name || '',
-      clientId: line.client_id || null,
-      amount: String(line.amount),
-      descriptionCode: line.description_code || '',
-      description: line.description || ''
-    })));
+
+    console.log('[수정 모드] 원본 voucherLines:', voucherLines);
+
+    const mappedLines = voucherLines.map(line => {
+      // voucher_type이 차변(3) 또는 결차(5)면 debit_amount, 아니면 credit_amount 사용
+      const amount = ['3', '5'].includes(line.voucher_type)
+        ? line.debit_amount
+        : line.credit_amount;
+
+      console.log(`[수정 모드] Line mapping - voucher_type: ${line.voucher_type}, debit: ${line.debit_amount}, credit: ${line.credit_amount}, amount: ${amount}`);
+
+      return {
+        month: new Date(line.voucher_date).getMonth() + 1,
+        day: new Date(line.voucher_date).getDate(),
+        voucherType: line.voucher_type,
+        accountCode: line.account_code,
+        accountName: line.account_name,
+        accountId: line.account_id,
+        clientCode: line.client_code || '',
+        clientName: line.client_name || '',
+        clientId: line.client_id || null,
+        amount: String(amount || 0),
+        descriptionCode: line.description_code || '',
+        description: line.description || ''
+      };
+    });
+
+    console.log('[수정 모드] 매핑된 tempLines:', mappedLines);
+    setTempLines(mappedLines);
   };
 
   // 수정 모드 취소
@@ -646,16 +681,19 @@ function VoucherTable({ lines, onLineUpdate }) {
   const isDebitType = (type) => ['3', '5'].includes(type); // 차변(3), 결차(5)
 
   const formatAmount = (value) => {
-    if (!value) return '';
-    return parseFloat(value).toLocaleString('ko-KR');
+    if (!value || value === '') return '';
+    const num = parseFloat(value);
+    if (isNaN(num)) return '';
+    return num.toLocaleString('ko-KR');
   };
 
-  // 전표번호별로 그룹화
+  // 날짜 + 전표번호별로 그룹화
   const groupedLines = lines.reduce((acc, line) => {
-    if (!acc[line.voucher_no]) {
-      acc[line.voucher_no] = [];
+    const key = `${line.voucher_date}_${line.voucher_no}`;
+    if (!acc[key]) {
+      acc[key] = [];
     }
-    acc[line.voucher_no].push(line);
+    acc[key].push(line);
     return acc;
   }, {});
 
@@ -681,22 +719,29 @@ function VoucherTable({ lines, onLineUpdate }) {
         </thead>
         <tbody>
           {/* 저장된 전표 라인들 */}
-          {Object.entries(groupedLines).flatMap(([voucherNo, voucherLines]) => [
+          {Object.entries(groupedLines).flatMap(([voucherKey, voucherLines]) => {
+            // voucherKey는 "날짜_전표번호" 형식이므로 실제 전표번호만 추출
+            const fullVoucherNo = voucherLines[0]?.voucher_no || voucherKey.split('_')[1];
+            // YYYYMMDD-001 형식에서 001만 추출 (하이픈이 있으면 뒷부분만, 없으면 그대로)
+            const displayVoucherNo = fullVoucherNo.includes('-')
+              ? fullVoucherNo.split('-')[1]
+              : fullVoucherNo;
+            return [
             // 전표번호 헤더
-            <tr key={`voucher-${voucherNo}-header`} className={styles.voucherHeader}>
+            <tr key={`voucher-${voucherKey}-header`} className={styles.voucherHeader}>
               <td colSpan="13">
                 <div className={styles.voucherHeaderContent}>
-                  <span>전표번호: {voucherNo}</span>
+                  <span>전표번호: {displayVoucherNo}</span>
                   <div className={styles.voucherActions}>
                     <button
                       className={styles.editButton}
-                      onClick={() => handleEditVoucher(voucherNo)}
+                      onClick={() => handleEditVoucher(fullVoucherNo)}
                     >
                       수정
                     </button>
                     <button
                       className={styles.deleteButton}
-                      onClick={() => handleDeleteVoucher(voucherNo)}
+                      onClick={() => handleDeleteVoucher(fullVoucherNo)}
                     >
                       삭제
                     </button>
@@ -705,24 +750,35 @@ function VoucherTable({ lines, onLineUpdate }) {
               </td>
             </tr>,
             // 전표 라인들
-            ...voucherLines.map(line => (
+            ...voucherLines.map(line => {
+              // 각 라인의 전표번호도 001만 표시
+              const lineDisplayNo = line.voucher_no && line.voucher_no.includes('-')
+                ? line.voucher_no.split('-')[1]
+                : (line.voucher_no || '');
+              return (
               <tr key={line.line_id}>
                 <td>{new Date(line.voucher_date).getMonth() + 1}</td>
                 <td>{new Date(line.voucher_date).getDate()}</td>
                 <td>{getVoucherTypeLabel(line.voucher_type)}</td>
-                <td>{line.voucher_no}</td>
+                <td>{lineDisplayNo}</td>
                 <td>{line.account_code}</td>
                 <td>{line.account_name}</td>
                 <td>{line.client_code || '-'}</td>
                 <td>{line.client_name || '-'}</td>
-                <td>{line.debit_amount > 0 ? Math.round(line.debit_amount).toLocaleString('ko-KR') : ''}</td>
-                <td>{line.credit_amount > 0 ? Math.round(line.credit_amount).toLocaleString('ko-KR') : ''}</td>
+                <td>
+                  {line.debit_amount > 0 ? Math.round(line.debit_amount).toLocaleString('ko-KR') : ''}
+                </td>
+                <td>
+                  {line.credit_amount > 0 ? Math.round(line.credit_amount).toLocaleString('ko-KR') : ''}
+                </td>
                 <td>{line.description_code || '-'}</td>
                 <td>{line.description}</td>
                 <td></td>
               </tr>
-            ))
-          ])}
+              );
+            })
+          ];
+          })}
 
           {/* 구분선 */}
           {lines.length > 0 && tempLines.length > 0 && (

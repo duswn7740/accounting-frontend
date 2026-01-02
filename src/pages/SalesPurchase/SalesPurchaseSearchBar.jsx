@@ -1,37 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './SalesPurchaseSearchBar.module.css';
 
-const STORAGE_KEY = 'salesPurchaseSearchCondition';
-
 function SalesPurchaseSearchBar({ onSearch }) {
-  const today = new Date();
   const [searchType, setSearchType] = useState('date');
   const [formData, setFormData] = useState({
-    year: today.getFullYear(),
+    year: (() => {
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
+      return fiscalPeriodInfo.startDate
+        ? parseInt(fiscalPeriodInfo.startDate.substring(0, 4))
+        : new Date().getFullYear();
+    })(),
     startMonth: '',
     startDay: '',
     endMonth: '',
     endDay: ''
   });
-
-  // 컴포넌트 마운트 시 localStorage에서 조회조건 불러오기
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const savedData = JSON.parse(saved);
-        setFormData(savedData.formData);
-        setSearchType(savedData.searchType);
-        // 자동으로 조회
-        const { startDate, endDate } = savedData;
-        if (startDate && endDate) {
-          onSearch(startDate, endDate);
-        }
-      } catch (error) {
-        console.error('조회조건 불러오기 실패:', error);
-      }
-    }
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,14 +45,6 @@ function SalesPurchaseSearchBar({ onSearch }) {
       const lastDay = new Date(formData.year, formData.endMonth, 0).getDate();
       endDate = `${formData.year}-${String(formData.endMonth).padStart(2, '0')}-${lastDay}`;
     }
-
-    // localStorage에 조회조건 저장
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      formData,
-      searchType,
-      startDate,
-      endDate
-    }));
 
     onSearch(startDate, endDate);
   };
@@ -104,9 +79,10 @@ function SalesPurchaseSearchBar({ onSearch }) {
           type="text"
           name="year"
           value={formData.year}
-          onChange={handleChange}
+          readOnly
           className={styles.yearInput}
           placeholder="년"
+          style={{ backgroundColor: '#f0f0f0', cursor: 'not-allowed' }}
         />
         년
 

@@ -1,0 +1,727 @@
+/* 컨테이너 & 레이아웃 */
+.container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 정보 박스 */
+.infoBox {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.infoBox p {
+  margin: 5px 0;
+  color: #555;
+  font-weight: 500;
+}
+
+/* 설명 섹션 */
+.description {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f0f8ff;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+}
+
+.description h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.description p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.description ul {
+  margin: 10px 0;
+  padding-left: 25px;
+}
+
+.description li {
+  color: #666;
+  padding: 5px 0;
+}
+
+/* 코드범위 선택기 */
+.codeRangeSelector {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.codeRangeSelector label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+}
+
+.codeRangeSelector select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+/* 날짜 입력 */
+.dateInputs {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.dateInputsHorizontal {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.inputGroup {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.inputGroup:last-child {
+  margin-bottom: 0;
+}
+
+.inputGroup label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+  min-width: 150px;
+}
+
+.inputGroup input[type="date"],
+.inputGroup input[type="text"] {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.dateInputsHorizontal .inputGroup {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.dateInputsHorizontal .inputGroup label {
+  min-width: auto;
+  white-space: nowrap;
+}
+
+.dateInputsHorizontal .saveButton {
+  margin-left: auto;
+}
+
+/* 데이터 표시 */
+.dataDisplay {
+  margin: 20px 0;
+}
+
+.dataDisplay h3 {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+}
+
+/* 테이블 래퍼 */
+.tableWrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 기본 테이블 스타일 */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.table td {
+  padding: 8px 15px;
+  border: 1px solid #e9ecef;
+}
+
+/* 테이블 컬럼 크기 */
+.itemColumn {
+  width: 60%;
+}
+
+.amountColumn {
+  width: 40%;
+  text-align: right !important;
+}
+
+.codeCol {
+  width: 15%;
+}
+
+.nameCol {
+  width: 45%;
+}
+
+.amountCol {
+  width: 40%;
+  text-align: right !important;
+}
+
+/* 섹션 헤더 */
+.sectionHeader {
+  background-color: #e3f2fd !important;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.sectionHeader td {
+  padding: 10px 15px !important;
+}
+
+.subsectionHeader {
+  background-color: #f5f5f5;
+  font-weight: 500;
+}
+
+/* 계층적 들여쓰기 */
+.indent1 {
+  padding-left: 30px !important;
+}
+
+.indent2 {
+  padding-left: 50px !important;
+}
+
+.indent3 {
+  padding-left: 70px !important;
+}
+
+/* 금액 표시 */
+.amount {
+  text-align: right !important;
+  font-family: 'Consolas', monospace;
+  padding-right: 15px !important;
+}
+
+/* 입력 행 */
+.inputRow {
+  background-color: #fffef0;
+}
+
+.inputCell {
+  padding: 4px 15px !important;
+}
+
+.inventoryInput {
+  width: 100%;
+  padding: 6px 10px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: right;
+  font-family: 'Consolas', monospace;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.inventoryInput:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 계산 행 */
+.calculationRow {
+  background-color: #f8f9fa;
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* 소계 행 */
+.subtotalRow {
+  background-color: #e9ecef;
+  font-weight: 600;
+  border-top: 2px solid #adb5bd !important;
+}
+
+.subtotalRow td {
+  border-top: 2px solid #adb5bd !important;
+}
+
+/* 합계 행 */
+.totalRow {
+  background-color: #d1ecf1;
+  font-weight: 700;
+  font-size: 15px;
+  border-top: 3px double #495057 !important;
+  border-bottom: 3px double #495057 !important;
+}
+
+.totalRow td {
+  padding: 12px 15px !important;
+  border-top: 3px double #495057 !important;
+  border-bottom: 3px double #495057 !important;
+}
+
+/* 푸터 행 */
+.table tfoot {
+  background-color: #495057;
+  color: white;
+  font-weight: 600;
+}
+
+.footerRow {
+  font-size: 15px;
+}
+
+.footerRow td {
+  padding: 12px 15px !important;
+  border: 1px solid #6c757d !important;
+}
+
+.footerRow .amount {
+  color: white;
+}
+
+/* 손익계산서 전용 스타일 */
+.incomeStatement {
+  margin: 20px 0;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section h3 {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+}
+
+.detailTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.detailTable th,
+.detailTable td {
+  padding: 10px 15px;
+  border: 1px solid #e9ecef;
+  text-align: left;
+}
+
+.detailTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+.detailTable .code {
+  text-align: center;
+}
+
+.detailTable .name {
+  padding-left: 20px;
+}
+
+.detailTable .amount {
+  text-align: right !important;
+  font-family: 'Consolas', monospace;
+}
+
+.detailTable .totalRow {
+  background-color: #e9ecef !important;
+}
+
+.detailTable .totalRow td {
+  border-top: 2px solid #adb5bd !important;
+  padding: 10px 15px !important;
+}
+
+.detailTable .totalLabel {
+  text-align: left !important;
+  font-weight: 600;
+  padding-left: 15px !important;
+}
+
+.detailTable .totalAmount {
+  text-align: right !important;
+  font-family: 'Consolas', monospace;
+  font-weight: 600;
+}
+
+.detailTable .noData {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.summaryTable td {
+  padding: 10px 15px;
+  border: 1px solid #e9ecef;
+}
+
+.summaryTable .label {
+  font-weight: 500;
+  color: #333;
+  width: 60%;
+}
+
+.summaryTable .amount {
+  text-align: right !important;
+  font-family: 'Consolas', monospace;
+  width: 40%;
+}
+
+.netIncomeRow {
+  background-color: #e8f5e9;
+}
+
+.netIncomeRow .label {
+  font-weight: 700;
+  font-size: 16px;
+  color: #2e7d32;
+}
+
+.netIncomeRow .netIncomeAmount {
+  text-align: right !important;
+  font-family: 'Consolas', monospace;
+  font-weight: 700;
+  font-size: 16px;
+  color: #2e7d32;
+}
+
+.statementTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.statementTable th,
+.statementTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.statementTable th {
+  background: #f8f9fa;
+  font-weight: bold;
+  color: #333;
+}
+
+.statementTable .amount {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+.statementTable .totalRow {
+  background: #f0f8ff;
+  font-weight: bold;
+}
+
+.statementTable .totalRow td {
+  border-top: 2px solid #007bff;
+  border-bottom: 2px solid #007bff;
+}
+
+/* 대차대조표 */
+.balanceSheet {
+  margin: 20px 0;
+}
+
+.balanceSheetGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.balanceSheetColumn h3 {
+  color: #333;
+  font-size: 18px;
+  margin: 20px 0 10px 0;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+}
+
+.balanceSheetColumn h3:first-child {
+  margin-top: 0;
+}
+
+.balanceCheck {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f0f8ff;
+  border-radius: 6px;
+}
+
+.balanced {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.unbalanced {
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* 합계잔액시산표 */
+.trialBalance {
+  margin: 20px 0;
+}
+
+.trialBalanceTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.trialBalanceTable th,
+.trialBalanceTable td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.trialBalanceTable th {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.trialBalanceTable td.amount {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+.trialBalanceTable .totalRow {
+  background: #f0f8ff;
+  font-weight: bold;
+}
+
+.trialBalanceTable .totalRow td {
+  border-top: 3px solid #007bff;
+}
+
+/* 이익잉여금처분계산서 */
+.retainedEarnings {
+  margin: 20px 0;
+}
+
+.retainedEarningsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.retainedEarningsTable thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.retainedEarningsTable th {
+  padding: 12px 15px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.retainedEarningsTable .subHeader th {
+  padding: 8px 15px;
+  background-color: #e9ecef;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.retainedEarningsTable .categoryCol {
+  width: 35%;
+  text-align: left !important;
+}
+
+.retainedEarningsTable .accountCodeCol {
+  width: 15%;
+}
+
+.retainedEarningsTable .periodCol {
+  width: 25%;
+}
+
+.retainedEarningsTable td {
+  padding: 8px 15px;
+  border: 1px solid #e9ecef;
+}
+
+.retainedEarningsTable .amount {
+  text-align: right !important;
+  font-family: 'Consolas', monospace;
+}
+
+/* 버튼 */
+.buttonContainer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.executeButton {
+  padding: 15px 40px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #007bff;
+  color: white;
+  transition: all 0.2s;
+}
+
+.executeButton:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.executeButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background-color: #fff;
+  border-top: 1px solid #dee2e6;
+}
+
+.saveButton {
+  padding: 12px 40px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.saveButton:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.saveButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .balanceSheetGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .inputGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .inputGroup label {
+    margin-bottom: 5px;
+  }
+
+  .table,
+  .statementTable,
+  .detailTable,
+  .summaryTable {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td,
+  .statementTable th,
+  .statementTable td,
+  .detailTable th,
+  .detailTable td,
+  .summaryTable td {
+    padding: 6px 8px;
+  }
+
+  .trialBalanceTable {
+    font-size: 12px;
+  }
+
+  .indent1 {
+    padding-left: 15px !important;
+  }
+
+  .indent2 {
+    padding-left: 30px !important;
+  }
+
+  .indent3 {
+    padding-left: 45px !important;
+  }
+}
