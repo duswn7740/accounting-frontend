@@ -161,18 +161,39 @@
   gap: 8px;
 }
 
-.editButton {
-  padding: 4px 12px;
-  background-color: #3498db;
-  color: white;
+.editButton,
+.saveButton,
+.voucherActions .cancelButton {
+  padding: 6px 12px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
+  color: white;
+}
+
+.editButton {
+  background-color: #3498db;
 }
 
 .editButton:hover {
   background-color: #2980b9;
+}
+
+.saveButton {
+  background-color: #27ae60;
+}
+
+.saveButton:hover {
+  background-color: #229954;
+}
+
+.voucherActions .cancelButton {
+  background-color: #95a5a6;
+}
+
+.voucherActions .cancelButton:hover {
+  background-color: #7f8c8d;
 }
 
 /* 임시 라인 */

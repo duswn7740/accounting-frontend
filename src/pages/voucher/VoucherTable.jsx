@@ -29,9 +29,9 @@ function VoucherTable({ lines, onLineUpdate }) {
     description: ''
   });
 
-  // 수정 모드
-  const [editMode, setEditMode] = useState(false);
+  // 수정 모드 - 전표 ID로 관리
   const [editingVoucherId, setEditingVoucherId] = useState(null);
+  const [editFormData, setEditFormData] = useState([]);
 
   // 모달 상태
   const [showAccountModal, setShowAccountModal] = useState(false);
@@ -569,58 +569,116 @@ function VoucherTable({ lines, onLineUpdate }) {
     const voucherLines = lines.filter(line => line.voucher_no === voucherNo);
     if (voucherLines.length === 0) return;
 
-    setEditMode(true);
     setEditingVoucherId(voucherLines[0].voucher_id);
 
-    console.log('[수정 모드] 원본 voucherLines:', voucherLines);
+    const mappedLines = voucherLines.map(line => ({
+      line_id: line.line_id,
+      voucher_date: line.voucher_date,
+      month: new Date(line.voucher_date).getMonth() + 1,
+      day: new Date(line.voucher_date).getDate(),
+      voucherType: line.voucher_type,
+      accountCode: line.account_code,
+      accountName: line.account_name,
+      accountId: line.account_id,
+      clientCode: line.client_code || '',
+      clientName: line.client_name || '',
+      clientId: line.client_id || null,
+      debitAmount: line.debit_amount || 0,
+      creditAmount: line.credit_amount || 0,
+      descriptionCode: line.description_code || '',
+      description: line.description || ''
+    }));
 
-    const mappedLines = voucherLines.map(line => {
-      // voucher_type이 차변(3) 또는 결차(5)면 debit_amount, 아니면 credit_amount 사용
-      const amount = ['3', '5'].includes(line.voucher_type)
-        ? line.debit_amount
-        : line.credit_amount;
+    setEditFormData(mappedLines);
+  };
 
-      console.log(`[수정 모드] Line mapping - voucher_type: ${line.voucher_type}, debit: ${line.debit_amount}, credit: ${line.credit_amount}, amount: ${amount}`);
+  // 수정 중인 라인 데이터 업데이트
+  const handleUpdateEditLine = (lineIndex, field, value) => {
+    setEditFormData(prev => {
+      const newData = [...prev];
 
-      return {
-        month: new Date(line.voucher_date).getMonth() + 1,
-        day: new Date(line.voucher_date).getDate(),
-        voucherType: line.voucher_type,
-        accountCode: line.account_code,
-        accountName: line.account_name,
-        accountId: line.account_id,
-        clientCode: line.client_code || '',
-        clientName: line.client_name || '',
-        clientId: line.client_id || null,
-        amount: String(amount || 0),
-        descriptionCode: line.description_code || '',
-        description: line.description || ''
-      };
+      if (field === 'accountCode') {
+        const account = accounts.find(a => a.account_code === value);
+        if (account) {
+          newData[lineIndex] = {
+            ...newData[lineIndex],
+            accountCode: value,
+            accountName: account.account_name,
+            accountId: account.account_id
+          };
+        } else {
+          newData[lineIndex] = { ...newData[lineIndex], accountCode: value };
+        }
+      } else if (field === 'clientCode') {
+        const client = clients.find(c => c.client_code === value);
+        if (client) {
+          newData[lineIndex] = {
+            ...newData[lineIndex],
+            clientCode: value,
+            clientName: client.client_name,
+            clientId: client.client_id
+          };
+        } else {
+          newData[lineIndex] = { ...newData[lineIndex], clientCode: value };
+        }
+      } else if (field === 'debitAmount' || field === 'creditAmount') {
+        const numValue = value.replace(/,/g, '');
+        newData[lineIndex] = { ...newData[lineIndex], [field]: numValue };
+      } else {
+        newData[lineIndex] = { ...newData[lineIndex], [field]: value };
+      }
+
+      return newData;
     });
+  };
 
-    console.log('[수정 모드] 매핑된 tempLines:', mappedLines);
-    setTempLines(mappedLines);
+  // 수정 저장
+  const handleSaveEdit = async () => {
+    if (!editingVoucherId || editFormData.length === 0) return;
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo'));
+
+      if (!fiscalPeriodInfo) {
+        alert('회계기수 정보를 찾을 수 없습니다.');
+        return;
+      }
+
+      const year = parseInt(fiscalPeriodInfo.startDate.substring(0, 4));
+      const firstLine = editFormData[0];
+      const voucherDate = `${year}-${String(firstLine.month).padStart(2, '0')}-${String(firstLine.day).padStart(2, '0')}`;
+
+      const voucherData = {
+        companyId: user.companyId,
+        voucherDate,
+        voucherNo: null,
+        lines: editFormData.map(line => ({
+          voucherType: line.voucherType,
+          accountId: line.accountId,
+          clientId: line.clientId,
+          clientName: line.clientName || null,
+          amount: parseFloat(['3', '5'].includes(line.voucherType) ? line.debitAmount : line.creditAmount),
+          descriptionCode: line.descriptionCode || null,
+          description: line.description || null
+        }))
+      };
+
+      await updateVoucherWithLines(editingVoucherId, voucherData);
+      alert('전표가 수정되었습니다');
+
+      setEditingVoucherId(null);
+      setEditFormData([]);
+      onLineUpdate();
+    } catch (error) {
+      alert(error.response?.data?.error || '수정 실패');
+    }
   };
 
   // 수정 모드 취소
   const handleCancelEdit = () => {
-    setEditMode(false);
     setEditingVoucherId(null);
-    setTempLines([]);
-    setCurrentLine({
-      month: '',
-      day: '',
-      voucherType: '3',
-      accountCode: '',
-      accountName: '',
-      accountId: null,
-      clientCode: '',
-      clientName: '',
-      clientId: null,
-      amount: '',
-      descriptionCode: '',
-      description: ''
-    });
+    setEditFormData([]);
   };
 
   // 전표 전체 삭제
@@ -733,46 +791,190 @@ function VoucherTable({ lines, onLineUpdate }) {
                 <div className={styles.voucherHeaderContent}>
                   <span>전표번호: {displayVoucherNo}</span>
                   <div className={styles.voucherActions}>
-                    <button
-                      className={styles.editButton}
-                      onClick={() => handleEditVoucher(fullVoucherNo)}
-                    >
-                      수정
-                    </button>
-                    <button
-                      className={styles.deleteButton}
-                      onClick={() => handleDeleteVoucher(fullVoucherNo)}
-                    >
-                      삭제
-                    </button>
+                    {editingVoucherId === voucherLines[0].voucher_id ? (
+                      <>
+                        <button
+                          className={styles.saveButton}
+                          onClick={handleSaveEdit}
+                        >
+                          저장
+                        </button>
+                        <button
+                          className={styles.cancelButton}
+                          onClick={handleCancelEdit}
+                        >
+                          취소
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          className={styles.editButton}
+                          onClick={() => handleEditVoucher(fullVoucherNo)}
+                        >
+                          수정
+                        </button>
+                        <button
+                          className={styles.deleteButton}
+                          onClick={() => handleDeleteVoucher(fullVoucherNo)}
+                        >
+                          삭제
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </td>
             </tr>,
             // 전표 라인들
-            ...voucherLines.map(line => {
-              // 각 라인의 전표번호도 001만 표시
+            ...voucherLines.map((line, lineIdx) => {
               const lineDisplayNo = line.voucher_no && line.voucher_no.includes('-')
                 ? line.voucher_no.split('-')[1]
                 : (line.voucher_no || '');
+
+              const isEditing = editingVoucherId === line.voucher_id;
+              const editLine = isEditing ? editFormData[lineIdx] : null;
+
               return (
-              <tr key={line.line_id}>
-                <td>{new Date(line.voucher_date).getMonth() + 1}</td>
-                <td>{new Date(line.voucher_date).getDate()}</td>
-                <td>{getVoucherTypeLabel(line.voucher_type)}</td>
+              <tr key={line.line_id} className={isEditing ? styles.editingLine : ''}>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.month}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'month', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    new Date(line.voucher_date).getMonth() + 1
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.day}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'day', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    new Date(line.voucher_date).getDate()
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <select
+                      value={editLine.voucherType}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'voucherType', e.target.value)}
+                      className={styles.input}
+                    >
+                      {voucherTypeOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    getVoucherTypeLabel(line.voucher_type)
+                  )}
+                </td>
                 <td>{lineDisplayNo}</td>
-                <td>{line.account_code}</td>
-                <td>{line.account_name}</td>
-                <td>{line.client_code || '-'}</td>
-                <td>{line.client_name || '-'}</td>
                 <td>
-                  {line.debit_amount > 0 ? Math.round(line.debit_amount).toLocaleString('ko-KR') : ''}
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.accountCode}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'accountCode', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.account_code
+                  )}
                 </td>
                 <td>
-                  {line.credit_amount > 0 ? Math.round(line.credit_amount).toLocaleString('ko-KR') : ''}
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.accountName}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'accountName', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.account_name
+                  )}
                 </td>
-                <td>{line.description_code || '-'}</td>
-                <td>{line.description}</td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.clientCode}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'clientCode', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.client_code || '-'
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.clientName}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'clientName', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.client_name || '-'
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formatAmount(editLine.debitAmount)}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'debitAmount', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.debit_amount > 0 ? Math.round(line.debit_amount).toLocaleString('ko-KR') : ''
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formatAmount(editLine.creditAmount)}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'creditAmount', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.credit_amount > 0 ? Math.round(line.credit_amount).toLocaleString('ko-KR') : ''
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.descriptionCode}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'descriptionCode', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.description_code || '-'
+                  )}
+                </td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editLine.description}
+                      onChange={(e) => handleUpdateEditLine(lineIdx, 'description', e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : (
+                    line.description
+                  )}
+                </td>
                 <td></td>
               </tr>
               );
@@ -781,14 +983,14 @@ function VoucherTable({ lines, onLineUpdate }) {
           })}
 
           {/* 구분선 */}
-          {lines.length > 0 && tempLines.length > 0 && (
+          {lines.length > 0 && tempLines.length > 0 && !editingVoucherId && (
             <tr className={styles.separator}>
               <td colSpan="13"></td>
             </tr>
           )}
 
-          {/* 임시 라인들 (수정 가능) */}
-          {tempLines.map((line, index) => (
+          {/* 임시 라인들 (새 전표 입력용) - 수정 모드가 아닐 때만 표시 */}
+          {!editingVoucherId && tempLines.map((line, index) => (
             <tr key={`temp-${index}`} className={styles.tempLine}>
               <td>{line.month}</td>
               <td>{line.day}</td>
@@ -883,21 +1085,24 @@ function VoucherTable({ lines, onLineUpdate }) {
             </tr>
           ))}
 
-          {/* 차대변 합계 표시 */}
-          <tr>
-            <td colSpan="13" style={{ padding: 0 }}>
-              <div className={styles.totalsSection}>
-                <div>차변 합계: <strong>{formatAmount(totals.debit)}</strong></div>
-                <div>대변 합계: <strong>{formatAmount(totals.credit)}</strong></div>
-                <div className={totals.balanced ? styles.balanced : styles.unbalanced}>
-                  {totals.balanced ? '✓ 차대변 일치' : '✗ 차대변 불일치'}
+          {/* 차대변 합계 표시 - 수정 모드가 아닐 때만 */}
+          {!editingVoucherId && (
+            <tr>
+              <td colSpan="13" style={{ padding: 0 }}>
+                <div className={styles.totalsSection}>
+                  <div>차변 합계: <strong>{formatAmount(totals.debit)}</strong></div>
+                  <div>대변 합계: <strong>{formatAmount(totals.credit)}</strong></div>
+                  <div className={totals.balanced ? styles.balanced : styles.unbalanced}>
+                    {totals.balanced ? '✓ 차대변 일치' : '✗ 차대변 불일치'}
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+          )}
 
-          {/* 새 라인 입력 */}
-          <tr className={styles.newLineRow}>
+          {/* 새 라인 입력 - 수정 모드가 아닐 때만 */}
+          {!editingVoucherId && (
+            <tr className={styles.newLineRow}>
             <td>
               <input
                 ref={monthInputRef}
@@ -1061,27 +1266,22 @@ function VoucherTable({ lines, onLineUpdate }) {
               </button>
             </td>
           </tr>
+          )}
         </tbody>
       </table>
 
-      {/* 전표 저장/수정 버튼 */}
-      <div className={styles.actionButtons}>
-        {editMode && (
+      {/* 전표 저장 버튼 - 수정 모드가 아닐 때만 표시 */}
+      {!editingVoucherId && (
+        <div className={styles.actionButtons}>
           <button
-            className={styles.cancelButton}
-            onClick={handleCancelEdit}
+            className={styles.saveVoucherButton}
+            onClick={handleSaveVoucher}
+            disabled={!totals.balanced || tempLines.length === 0}
           >
-            수정 취소
+            전표 저장
           </button>
-        )}
-        <button
-          className={styles.saveVoucherButton}
-          onClick={handleSaveVoucher}
-          disabled={!totals.balanced || tempLines.length === 0}
-        >
-          {editMode ? '전표 수정 저장' : '전표 저장'}
-        </button>
-      </div>
+        </div>
+      )}
 
       {showAccountModal && (
         <AccountSearchModal
