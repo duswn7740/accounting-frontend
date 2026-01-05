@@ -58,8 +58,19 @@
   width: 90px;
 }
 
-.table td:last-child{
-  width: 80px;
+/* 사업자번호 */
+.table td:nth-child(9) {
+  width: 100px;
+}
+
+/* 적요 */
+.table td:nth-child(14) {
+  width: 100px;
+}
+
+/* 관리 (마지막 열) - 버튼 공간 확보 */
+.table td:last-child {
+  width: 120px;
 }
 
 .newLineRow {
@@ -320,4 +331,57 @@
 .badge.불공 {
   background: #e2e3e5;
   color: #383d41;
+}
+
+/* 전표 헤더 행 */
+.voucherHeader {
+  background-color: #ecf0f1;
+  font-weight: 600;
+}
+
+.voucherHeaderContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+}
+
+.voucherActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton,
+.saveButton,
+.cancelButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: white;
+}
+
+.editButton {
+  background-color: #3498db;
+}
+
+.editButton:hover {
+  background-color: #2980b9;
+}
+
+.saveButton {
+  background-color: #27ae60;
+}
+
+.saveButton:hover {
+  background-color: #229954;
+}
+
+.cancelButton {
+  background-color: #95a5a6;
+}
+
+.cancelButton:hover {
+  background-color: #7f8c8d;
 }

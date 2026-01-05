@@ -632,6 +632,55 @@ function VoucherTable({ lines, onLineUpdate }) {
     });
   };
 
+  // 수정 모드에서 라인 추가
+  const handleAddEditLine = () => {
+    if (editFormData.length === 0) return;
+
+    const firstLine = editFormData[0];
+
+    // 마지막 라인의 차대변을 확인하여 반대쪽으로 추가
+    const lastLine = editFormData[editFormData.length - 1];
+    const lastVoucherType = lastLine.voucherType;
+    const isLastDebit = ['3', '5'].includes(lastVoucherType); // 차변(3), 결차(5)
+
+    // 반대편 전표유형 결정
+    let newVoucherType;
+    if (isLastDebit) {
+      newVoucherType = '4'; // 대변(4)
+    } else {
+      newVoucherType = '3'; // 차변(3)
+    }
+
+    const newLine = {
+      line_id: null,
+      voucher_date: firstLine.voucher_date,
+      month: firstLine.month,
+      day: firstLine.day,
+      voucherType: newVoucherType,
+      accountCode: '',
+      accountName: '',
+      accountId: null,
+      clientCode: '',
+      clientName: '',
+      clientId: null,
+      debitAmount: newVoucherType === '3' || newVoucherType === '5' ? 0 : 0,
+      creditAmount: newVoucherType === '4' || newVoucherType === '6' ? 0 : 0,
+      descriptionCode: '',
+      description: ''
+    };
+
+    setEditFormData(prev => [...prev, newLine]);
+  };
+
+  // 수정 모드에서 라인 삭제
+  const handleRemoveEditLine = (lineIndex) => {
+    if (editFormData.length === 1) {
+      alert('최소 1개의 라인은 있어야 합니다');
+      return;
+    }
+    setEditFormData(prev => prev.filter((_, idx) => idx !== lineIndex));
+  };
+
   // 수정 저장
   const handleSaveEdit = async () => {
     if (!editingVoucherId || editFormData.length === 0) return;
@@ -975,11 +1024,33 @@ function VoucherTable({ lines, onLineUpdate }) {
                     line.description
                   )}
                 </td>
-                <td></td>
+                <td>
+                  {isEditing && (
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => handleRemoveEditLine(lineIdx)}
+                    >
+                      삭제
+                    </button>
+                  )}
+                </td>
               </tr>
               );
-            })
-          ];
+            }),
+            // 수정 모드일 때 라인 추가 버튼
+            editingVoucherId === voucherLines[0].voucher_id && (
+              <tr key={`voucher-${voucherKey}-add`} className={styles.addLineRow}>
+                <td colSpan="13" style={{ textAlign: 'center', padding: '8px' }}>
+                  <button
+                    className={styles.addButton}
+                    onClick={handleAddEditLine}
+                  >
+                    + 라인 추가
+                  </button>
+                </td>
+              </tr>
+            )
+          ].filter(Boolean);
           })}
 
           {/* 구분선 */}
