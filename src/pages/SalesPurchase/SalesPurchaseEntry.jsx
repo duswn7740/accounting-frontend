@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import SalesPurchaseSearchBar from './SalesPurchaseSearchBar';
+import DateRangeFilter from '../../components/DateRangeFilter';
 import SalesPurchaseTable from './SalesPurchaseTable';
 import styles from './SalesPurchaseEntry.module.css';
 
@@ -16,7 +16,7 @@ function SalesPurchaseEntry() {
         <h2>매입매출 전표 입력</h2>
       </div>
 
-      <SalesPurchaseSearchBar onSearch={handleSearch} />
+      <DateRangeFilter onSearch={handleSearch} />
 
       <SalesPurchaseTable searchDates={searchDates} />
     </div>

@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { createVoucherWithLines, updateVoucherWithLines, deleteVoucherLine } from '../../api/voucherApi';
+import { createVoucherWithLines, updateVoucherWithLines, deleteVoucherLine, getVoucherLinesByDate } from '../../api/voucherApi';
 import { getAccountsByCompany } from '../../api/accountApi';
 import { getClientsByCompany } from '../../api/clientApi';
 import AccountSearchModal from './AccountSearchModal';
 import ClientSearchModal from './ClientSearchModal';
 import styles from './VoucherTable.module.css';
 
-function VoucherTable({ lines, onLineUpdate }) {
+function VoucherTable({ searchDates }) {
   const [accounts, setAccounts] = useState([]);
   const [clients, setClients] = useState([]);
+  const [lines, setLines] = useState([]);
 
   // 임시 라인들 (아직 DB에 저장 안 된 상태)
   const [tempLines, setTempLines] = useState([]);
@@ -58,6 +59,12 @@ function VoucherTable({ lines, onLineUpdate }) {
     fetchClients();
   }, []);
 
+  useEffect(() => {
+    if (searchDates.startDate && searchDates.endDate) {
+      fetchVouchers();
+    }
+  }, [searchDates]);
+
   const fetchAccounts = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -75,6 +82,21 @@ function VoucherTable({ lines, onLineUpdate }) {
       setClients(response.clients);
     } catch (error) {
       console.error('거래처 조회 실패:', error);
+    }
+  };
+
+  const fetchVouchers = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const response = await getVoucherLinesByDate(
+        user.companyId,
+        searchDates.startDate,
+        searchDates.endDate
+      );
+      setLines(response.lines || []);
+    } catch (error) {
+      console.error('전표 조회 실패:', error);
+      setLines([]);
     }
   };
 
@@ -325,6 +347,8 @@ function VoucherTable({ lines, onLineUpdate }) {
 
     // 현재 라인을 임시로 추가
     const newTempLines = [...tempLines, { ...currentLine }];
+    console.log('[추가 버튼 클릭]');
+    console.log('newTempLines:', newTempLines);
 
     // 새로운 라인을 포함한 차대변 계산
     let debit = 0;
@@ -341,9 +365,11 @@ function VoucherTable({ lines, onLineUpdate }) {
     });
 
     const balanced = Math.abs(debit - credit) < 0.01;
+    console.log('차대변 계산:', { debit, credit, balanced });
 
     // 차대변이 일치해야 저장
     if (balanced && newTempLines.length > 0) {
+      console.log('[자동 저장 시작]');
       try {
         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -370,10 +396,9 @@ function VoucherTable({ lines, onLineUpdate }) {
           }))
         };
 
-        if (editMode) {
+        if (editingVoucherId) {
           await updateVoucherWithLines(editingVoucherId, voucherData);
           alert('전표가 수정되었습니다');
-          setEditMode(false);
           setEditingVoucherId(null);
         } else {
           await createVoucherWithLines(voucherData);
@@ -397,7 +422,10 @@ function VoucherTable({ lines, onLineUpdate }) {
           description: ''
         });
 
-        onLineUpdate();
+        // 전표 목록 새로고침
+        if (searchDates.startDate && searchDates.endDate) {
+          await fetchVouchers();
+        }
 
         // 월 입력칸으로 포커스 이동
         setTimeout(() => {
@@ -407,6 +435,8 @@ function VoucherTable({ lines, onLineUpdate }) {
         }, 0);
 
       } catch (error) {
+        console.error('자동 저장 실패:', error);
+        console.error('에러 상세:', error.response?.data);
         alert(error.response?.data?.error || '저장 실패');
       }
     } else {
@@ -500,6 +530,7 @@ function VoucherTable({ lines, onLineUpdate }) {
 
       // 회계기수 정보에서 연도 가져오기
       const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo'));
+
       if (!fiscalPeriodInfo) {
         alert('회계기수 정보를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
         return;
@@ -510,10 +541,6 @@ function VoucherTable({ lines, onLineUpdate }) {
       const month = tempLines[0].month || new Date().getMonth() + 1;
       const day = tempLines[0].day || new Date().getDate();
       const voucherDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-      console.log('회계기수 정보:', fiscalPeriodInfo);
-      console.log('생성된 전표 날짜:', voucherDate);
-      console.log('전표 날짜 상세:', { year, month, day });
 
       const voucherData = {
         companyId: user.companyId,
@@ -530,13 +557,11 @@ function VoucherTable({ lines, onLineUpdate }) {
         }))
       };
 
-      if (editMode && editingVoucherId) {
-        await updateVoucherWithLines(editingVoucherId, voucherData);
-        alert('전표가 수정되었습니다');
-      } else {
-        await createVoucherWithLines(voucherData);
-        alert('전표가 저장되었습니다');
-      }
+      console.log('전송할 데이터:', JSON.stringify(voucherData, null, 2));
+      console.log('tempLines:', tempLines);
+
+      const response = await createVoucherWithLines(voucherData);
+      alert('전표가 저장되었습니다');
 
       // 초기화
       setTempLines([]);
@@ -554,13 +579,16 @@ function VoucherTable({ lines, onLineUpdate }) {
         descriptionCode: '',
         description: ''
       });
-      setEditMode(false);
-      setEditingVoucherId(null);
 
-      onLineUpdate();
+      // 전표 목록 새로고침 (검색 날짜가 설정되어 있을 때만)
+      if (searchDates.startDate && searchDates.endDate) {
+        await fetchVouchers();
+      }
 
     } catch (error) {
-      alert(error.response?.data?.error || '저장 실패');
+      console.error('전표 저장 실패:', error);
+      console.error('에러 상세:', error.response?.data);
+      alert(error.response?.data?.error || error.message || '저장 실패');
     }
   };
 
@@ -718,7 +746,11 @@ function VoucherTable({ lines, onLineUpdate }) {
 
       setEditingVoucherId(null);
       setEditFormData([]);
-      onLineUpdate();
+
+      // 전표 목록 새로고침 (검색 날짜가 설정되어 있을 때만)
+      if (searchDates.startDate && searchDates.endDate) {
+        await fetchVouchers();
+      }
     } catch (error) {
       alert(error.response?.data?.error || '수정 실패');
     }
@@ -744,8 +776,12 @@ function VoucherTable({ lines, onLineUpdate }) {
         await deleteVoucherLine(line.line_id, user.companyId);
       }
 
-      onLineUpdate();
       alert('전표가 삭제되었습니다');
+
+      // 전표 목록 새로고침 (검색 날짜가 설정되어 있을 때만)
+      if (searchDates.startDate && searchDates.endDate) {
+        await fetchVouchers();
+      }
     } catch (error) {
       alert(error.response?.data?.error || '삭제 실패');
     }
