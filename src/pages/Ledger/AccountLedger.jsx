@@ -919,7 +919,6 @@ function AccountLedger() {
                                     items={accounts}
                                     codeValue={currentEditData.account_code}
                                     nameValue={currentEditData.account_name}
-                                    idValue={null}
                                     onChange={(accountData) => handleEditAccountChange(editLineIndex, accountData)}
                                     onOpenModal={() => setShowAccountModal(true)}
                                     codeField="account_code"
@@ -937,7 +936,6 @@ function AccountLedger() {
                                     items={clients}
                                     codeValue={currentEditData.client_code || ''}
                                     nameValue={currentEditData.client_name || ''}
-                                    idValue={null}
                                     onChange={(clientData) => handleEditClientChange(editLineIndex, clientData)}
                                     onOpenModal={() => setShowClientModal(true)}
                                     codeField="client_code"

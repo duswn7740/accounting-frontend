@@ -1,14 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styles from './SearchInput.module.css';
 
 function SearchInput({
   items,
   codeValue,
   nameValue,
-  idValue,
   onChange,
   onOpenModal,
-  disabled = false,
   codeField = 'code',
   nameField = 'name',
   idField = 'id',
@@ -26,9 +24,6 @@ function SearchInput({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [suggestionType, setSuggestionType] = useState('code'); // 'code' or 'name'
-
-  const codeInputRef = useRef(null);
-  const nameInputRef = useRef(null);
 
   // 코드 입력 변경
   const handleCodeChange = (value) => {
@@ -191,12 +186,10 @@ function SearchInput({
     <>
       <td style={{ position: 'relative' }}>
         <input
-          ref={codeInputRef}
           type="text"
           value={codeValue}
           onChange={(e) => handleCodeChange(e.target.value)}
           onKeyDown={handleCodeKeyDown}
-          disabled={disabled}
           className={styles.input}
           placeholder={codePlaceholder}
         />
@@ -218,12 +211,10 @@ function SearchInput({
 
       <td style={{ position: 'relative' }}>
         <input
-          ref={nameInputRef}
           type="text"
           value={nameValue}
           onChange={(e) => handleNameChange(e.target.value)}
           onKeyDown={handleNameKeyDown}
-          disabled={disabled}
           className={styles.input}
           placeholder={namePlaceholder}
         />

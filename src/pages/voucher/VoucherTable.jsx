@@ -791,7 +791,6 @@ function VoucherTable({ searchDates }) {
                     items={accounts}
                     codeValue={editLine.accountCode}
                     nameValue={editLine.accountName}
-                    idValue={editLine.accountId}
                     onChange={(accountData) => handleEditAccountChange(lineIdx, accountData)}
                     onOpenModal={() => setShowAccountModal(true)}
                     codeField="account_code"
@@ -812,7 +811,6 @@ function VoucherTable({ searchDates }) {
                     items={clients}
                     codeValue={editLine.clientCode}
                     nameValue={editLine.clientName}
-                    idValue={editLine.clientId}
                     onChange={(clientData) => handleEditClientChange(lineIdx, clientData)}
                     onOpenModal={() => setShowClientModal(true)}
                     codeField="client_code"
@@ -1066,7 +1064,6 @@ function VoucherTable({ searchDates }) {
               items={accounts}
               codeValue={currentLine.accountCode}
               nameValue={currentLine.accountName}
-              idValue={currentLine.accountId}
               onChange={handleAccountChange}
               onOpenModal={() => setShowAccountModal(true)}
               codeField="account_code"
@@ -1080,7 +1077,6 @@ function VoucherTable({ searchDates }) {
               items={clients}
               codeValue={currentLine.clientCode}
               nameValue={currentLine.clientName}
-              idValue={currentLine.clientId}
               onChange={handleClientChange}
               onOpenModal={() => setShowClientModal(true)}
               codeField="client_code"
