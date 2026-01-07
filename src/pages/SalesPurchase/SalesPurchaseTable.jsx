@@ -4,6 +4,7 @@ import { getAccountsByCompany } from '@/api/accountApi';
 import { getClientsByCompany } from '@/api/clientApi';
 import AccountSearchModal from '../Voucher/AccountSearchModal';
 import ClientSearchModal from '../Voucher/ClientSearchModal';
+import SearchInput from '../../components/SearchInput';
 import styles from './SalesPurchaseTable.module.css';
 
 function SalesPurchaseTable({ searchDates }) {
@@ -138,43 +139,31 @@ function SalesPurchaseTable({ searchDates }) {
   const totals = calculateTotals();
 
   // 현재 라인 입력 변경
+  // AccountInput 컴포넌트로부터 계정 정보 받기
+  const handleAccountChange = (accountData) => {
+    setCurrentLine(prev => ({
+      ...prev,
+      accountId: accountData.accountId,
+      accountCode: accountData.accountCode || '',
+      accountName: accountData.accountName || ''
+    }));
+  };
+
+  // ClientInput 컴포넌트로부터 거래처 정보 받기
+  const handleClientChange = (clientData) => {
+    // 거래처 사업자번호도 함께 가져오기
+    const client = clients.find(c => c.client_id === clientData.clientId);
+    setCurrentLine(prev => ({
+      ...prev,
+      clientId: clientData.clientId,
+      clientCode: clientData.clientCode || '',
+      clientName: clientData.clientName || '',
+      clientBusinessNo: client?.business_number || ''
+    }));
+  };
+
   const handleCurrentLineChange = (field, value) => {
-    if (field === 'accountCode') {
-      const account = accounts.find(a => a.account_code === value);
-      if (account) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountCode: value,
-          accountName: account.account_name,
-          accountId: account.account_id
-        }));
-      } else {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountCode: value,
-          accountName: '',
-          accountId: null
-        }));
-      }
-    } else if (field === 'clientCode') {
-      const client = clients.find(c => c.client_code === value);
-      if (client) {
-        setCurrentLine(prev => ({
-          ...prev,
-          clientCode: value,
-          clientName: client.client_name,
-          clientBusinessNo: client.business_number,
-          clientId: client.client_id
-        }));
-      } else {
-        setCurrentLine(prev => ({
-          ...prev,
-          clientCode: value,
-          clientName: '',
-          clientBusinessNo: ''
-        }));
-      }
-    } else if (field === 'debitCredit') {
+    if (field === 'debitCredit') {
       // 차대변 변경 시 반대편 금액 초기화
       setCurrentLine(prev => ({
         ...prev,
@@ -592,37 +581,42 @@ function SalesPurchaseTable({ searchDates }) {
     }
   };
 
+  // 수정 모드 - AccountInput 컴포넌트로부터 계정 정보 받기
+  const handleEditAccountChange = (lineIndex, accountData) => {
+    setEditFormData(prev => {
+      const newData = [...prev];
+      newData[lineIndex] = {
+        ...newData[lineIndex],
+        accountId: accountData.accountId,
+        accountCode: accountData.accountCode || '',
+        accountName: accountData.accountName || ''
+      };
+      return newData;
+    });
+  };
+
+  // 수정 모드 - ClientInput 컴포넌트로부터 거래처 정보 받기
+  const handleEditClientChange = (lineIndex, clientData) => {
+    const client = clients.find(c => c.client_id === clientData.clientId);
+    setEditFormData(prev => {
+      const newData = [...prev];
+      newData[lineIndex] = {
+        ...newData[lineIndex],
+        clientId: clientData.clientId,
+        clientCode: clientData.clientCode || '',
+        clientName: clientData.clientName || '',
+        clientBusinessNo: client?.business_number || ''
+      };
+      return newData;
+    });
+  };
+
   // 수정 중인 라인 데이터 업데이트
   const handleUpdateEditLine = (lineIndex, field, value) => {
     setEditFormData(prev => {
       const newData = [...prev];
 
-      if (field === 'accountCode') {
-        const account = accounts.find(a => a.account_code === value);
-        if (account) {
-          newData[lineIndex] = {
-            ...newData[lineIndex],
-            accountCode: value,
-            accountName: account.account_name,
-            accountId: account.account_id
-          };
-        } else {
-          newData[lineIndex] = { ...newData[lineIndex], accountCode: value };
-        }
-      } else if (field === 'clientCode') {
-        const client = clients.find(c => c.client_code === value);
-        if (client) {
-          newData[lineIndex] = {
-            ...newData[lineIndex],
-            clientCode: value,
-            clientName: client.client_name,
-            clientBusinessNo: client.business_number,
-            clientId: client.client_id
-          };
-        } else {
-          newData[lineIndex] = { ...newData[lineIndex], clientCode: value };
-        }
-      } else if (field === 'debitAmount' || field === 'creditAmount') {
+      if (field === 'debitAmount' || field === 'creditAmount') {
         const numValue = value.replace(/,/g, '');
         newData[lineIndex] = { ...newData[lineIndex], [field]: numValue };
       } else {
@@ -791,14 +785,7 @@ function SalesPurchaseTable({ searchDates }) {
   };
 
   const handleKeyDown = (e, field) => {
-    if (e.key === 'F2') {
-      e.preventDefault();
-      if (field === 'account') {
-        setShowAccountModal(true);
-      } else if (field === 'client') {
-        setShowClientModal(true);
-      }
-    } else if (e.key === 'Enter' && field === 'description') {
+    if (e.key === 'Enter' && field === 'description') {
       e.preventDefault();
       handleAddLine();
     }
@@ -1002,38 +989,34 @@ function SalesPurchaseTable({ searchDates }) {
                         </select>
                       </td>
                       <td>{voucherNo}</td>
-                      <td>
-                        <input
-                          type="text"
-                          value={editLine.accountCode}
-                          onChange={(e) => handleUpdateEditLine(lineIdx, 'accountCode', e.target.value)}
-                          className={styles.input}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={editLine.accountName}
-                          onChange={(e) => handleUpdateEditLine(lineIdx, 'accountName', e.target.value)}
-                          className={styles.input}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={editLine.clientCode}
-                          onChange={(e) => handleUpdateEditLine(lineIdx, 'clientCode', e.target.value)}
-                          className={styles.input}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={editLine.clientName}
-                          onChange={(e) => handleUpdateEditLine(lineIdx, 'clientName', e.target.value)}
-                          className={styles.input}
-                        />
-                      </td>
+                      <SearchInput
+                        items={accounts}
+                        codeValue={editLine.accountCode}
+                        nameValue={editLine.accountName}
+                        idValue={editLine.accountId}
+                        onChange={(accountData) => handleEditAccountChange(lineIdx, accountData)}
+                        onOpenModal={() => setShowAccountModal(true)}
+                        codeField="account_code"
+                        nameField="account_name"
+                        idField="account_id"
+                        outputCodeField="accountCode"
+                        outputNameField="accountName"
+                        outputIdField="accountId"
+                      />
+                      <SearchInput
+                        items={clients}
+                        codeValue={editLine.clientCode}
+                        nameValue={editLine.clientName}
+                        idValue={editLine.clientId}
+                        onChange={(clientData) => handleEditClientChange(lineIdx, clientData)}
+                        onOpenModal={() => setShowClientModal(true)}
+                        codeField="client_code"
+                        nameField="client_name"
+                        idField="client_id"
+                        outputCodeField="clientCode"
+                        outputNameField="clientName"
+                        outputIdField="clientId"
+                      />
                       <td>
                         <input
                           type="text"
@@ -1248,46 +1231,35 @@ function SalesPurchaseTable({ searchDates }) {
                   <option value="대변">대변</option>
                 </select>
               </td>
-              <td>
-                <input
-                  type="text"
-                  value={currentLine.accountCode}
-                  onChange={(e) => handleCurrentLineChange('accountCode', e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, 'account')}
-                  className={styles.input}
-                  placeholder="F2"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={currentLine.accountName}
-                  readOnly
-                  onClick={() => setShowAccountModal(true)}
-                  className={styles.input}
-                  placeholder="계정과목 (F2)"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={currentLine.clientCode}
-                  onChange={(e) => handleCurrentLineChange('clientCode', e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, 'client')}
-                  className={styles.input}
-                  placeholder="F2"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={currentLine.clientName}
-                  readOnly
-                  onClick={() => setShowClientModal(true)}
-                  className={styles.input}
-                  placeholder="거래처 (F2)"
-                />
-              </td>
+              <SearchInput
+                items={accounts}
+                codeValue={currentLine.accountCode}
+                nameValue={currentLine.accountName}
+                idValue={currentLine.accountId}
+                onChange={handleAccountChange}
+                onOpenModal={() => setShowAccountModal(true)}
+                codeField="account_code"
+                nameField="account_name"
+                idField="account_id"
+                outputCodeField="accountCode"
+                outputNameField="accountName"
+                outputIdField="accountId"
+              />
+              <SearchInput
+                items={clients}
+                codeValue={currentLine.clientCode}
+                nameValue={currentLine.clientName}
+                idValue={currentLine.clientId}
+                onChange={handleClientChange}
+                onOpenModal={() => setShowClientModal(true)}
+                codeField="client_code"
+                nameField="client_name"
+                idField="client_id"
+                outputCodeField="clientCode"
+                outputNameField="clientName"
+                outputIdField="clientId"
+                namePlaceholder="거래처 (F2)"
+              />
               <td>
                 <input
                   type="text"

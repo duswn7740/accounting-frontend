@@ -4,6 +4,7 @@ import { getAccountsByCompany } from '../../api/accountApi';
 import { getClientsByCompany } from '../../api/clientApi';
 import AccountSearchModal from './AccountSearchModal';
 import ClientSearchModal from './ClientSearchModal';
+import SearchInput from '../../components/SearchInput';
 import styles from './VoucherTable.module.css';
 
 function VoucherTable({ searchDates }) {
@@ -38,13 +39,6 @@ function VoucherTable({ searchDates }) {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showClientModal, setShowClientModal] = useState(false);
 
-  // 계정과목 자동완성
-  const [accountSuggestions, setAccountSuggestions] = useState([]);
-  const [showAccountSuggestions, setShowAccountSuggestions] = useState(false);
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
-  const accountInputRef = useRef(null);
-  const accountNameInputRef = useRef(null);
-  const [suggestionType, setSuggestionType] = useState('code'); // 'code' or 'name'
   const monthInputRef = useRef(null);
 
   const voucherTypeOptions = [
@@ -133,166 +127,24 @@ function VoucherTable({ searchDates }) {
 
   const totals = calculateTotals();
 
-  // 계정코드 입력 변경 (자동완성 - 코드만)
-  const handleAccountCodeChange = (value) => {
-    setCurrentLine(prev => ({ ...prev, accountCode: value, accountName: '', accountId: null }));
-    setSuggestionType('code');
-
-    if (value) {
-      // 계정코드로만 필터링
-      const filtered = accounts.filter(a => a.account_code.startsWith(value));
-
-      // 정확히 일치하는 항목이 있으면 자동 선택
-      const exactMatch = accounts.find(a => a.account_code === value);
-      if (exactMatch) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountId: exactMatch.account_id,
-          accountCode: exactMatch.account_code,
-          accountName: exactMatch.account_name
-        }));
-        setShowAccountSuggestions(false);
-        setAccountSuggestions([]);
-      } else {
-        setAccountSuggestions(filtered);
-        setShowAccountSuggestions(filtered.length > 0);
-        setSelectedSuggestionIndex(-1);
-      }
-    } else {
-      setAccountSuggestions([]);
-      setShowAccountSuggestions(false);
-    }
-  };
-
-  // 계정과목명 입력 변경 (자동완성 - 과목명만)
-  const handleAccountNameChange = (value) => {
-    setCurrentLine(prev => ({ ...prev, accountName: value, accountCode: '', accountId: null }));
-    setSuggestionType('name');
-
-    if (value) {
-      // 계정과목명으로만 필터링
-      const filtered = accounts.filter(a => a.account_name.includes(value));
-
-      // 정확히 일치하는 항목이 있으면 자동 선택
-      const exactMatch = accounts.find(a => a.account_name === value);
-      if (exactMatch) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountId: exactMatch.account_id,
-          accountCode: exactMatch.account_code,
-          accountName: exactMatch.account_name
-        }));
-        setShowAccountSuggestions(false);
-        setAccountSuggestions([]);
-      } else {
-        setAccountSuggestions(filtered);
-        setShowAccountSuggestions(filtered.length > 0);
-        setSelectedSuggestionIndex(-1);
-      }
-    } else {
-      setAccountSuggestions([]);
-      setShowAccountSuggestions(false);
-    }
-  };
-
-  // 계정과목 자동완성 선택
-  const handleSelectAccountSuggestion = (account) => {
+  // AccountInput 컴포넌트로부터 계정 정보 받기
+  const handleAccountChange = (accountData) => {
     setCurrentLine(prev => ({
       ...prev,
-      accountId: account.account_id,
-      accountCode: account.account_code,
-      accountName: account.account_name
+      accountId: accountData.accountId,
+      accountCode: accountData.accountCode || '',
+      accountName: accountData.accountName || ''
     }));
-    setShowAccountSuggestions(false);
-    setAccountSuggestions([]);
   };
 
-  // 방향키로 자동완성 항목 선택 (계정코드용)
-  const handleAccountKeyDown = (e) => {
-    if (e.key === 'F2') {
-      e.preventDefault();
-      setShowAccountModal(true);
-      return;
-    }
-
-    if (!showAccountSuggestions) return;
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const newIndex = selectedSuggestionIndex < accountSuggestions.length - 1 ? selectedSuggestionIndex + 1 : selectedSuggestionIndex;
-      setSelectedSuggestionIndex(newIndex);
-      // 화살표로 이동하면 즉시 계정과목명 표시
-      if (newIndex >= 0 && accountSuggestions[newIndex]) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountId: accountSuggestions[newIndex].account_id,
-          accountCode: accountSuggestions[newIndex].account_code,
-          accountName: accountSuggestions[newIndex].account_name
-        }));
-      }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const newIndex = selectedSuggestionIndex > 0 ? selectedSuggestionIndex - 1 : 0;
-      setSelectedSuggestionIndex(newIndex);
-      // 화살표로 이동하면 즉시 계정과목명 표시
-      if (newIndex >= 0 && accountSuggestions[newIndex]) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountId: accountSuggestions[newIndex].account_id,
-          accountCode: accountSuggestions[newIndex].account_code,
-          accountName: accountSuggestions[newIndex].account_name
-        }));
-      }
-    } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
-      e.preventDefault();
-      handleSelectAccountSuggestion(accountSuggestions[selectedSuggestionIndex]);
-    } else if (e.key === 'Escape') {
-      setShowAccountSuggestions(false);
-    }
-  };
-
-  // 방향키로 자동완성 항목 선택 (계정과목명용)
-  const handleAccountNameKeyDown = (e) => {
-    if (e.key === 'F2') {
-      e.preventDefault();
-      setShowAccountModal(true);
-      return;
-    }
-
-    if (!showAccountSuggestions) return;
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const newIndex = selectedSuggestionIndex < accountSuggestions.length - 1 ? selectedSuggestionIndex + 1 : selectedSuggestionIndex;
-      setSelectedSuggestionIndex(newIndex);
-      // 화살표로 이동하면 즉시 계정코드 표시
-      if (newIndex >= 0 && accountSuggestions[newIndex]) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountId: accountSuggestions[newIndex].account_id,
-          accountCode: accountSuggestions[newIndex].account_code,
-          accountName: accountSuggestions[newIndex].account_name
-        }));
-      }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const newIndex = selectedSuggestionIndex > 0 ? selectedSuggestionIndex - 1 : 0;
-      setSelectedSuggestionIndex(newIndex);
-      // 화살표로 이동하면 즉시 계정코드 표시
-      if (newIndex >= 0 && accountSuggestions[newIndex]) {
-        setCurrentLine(prev => ({
-          ...prev,
-          accountId: accountSuggestions[newIndex].account_id,
-          accountCode: accountSuggestions[newIndex].account_code,
-          accountName: accountSuggestions[newIndex].account_name
-        }));
-      }
-    } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
-      e.preventDefault();
-      handleSelectAccountSuggestion(accountSuggestions[selectedSuggestionIndex]);
-    } else if (e.key === 'Escape') {
-      setShowAccountSuggestions(false);
-    }
+  // ClientInput 컴포넌트로부터 거래처 정보 받기
+  const handleClientChange = (clientData) => {
+    setCurrentLine(prev => ({
+      ...prev,
+      clientId: clientData.clientId,
+      clientCode: clientData.clientCode || '',
+      clientName: clientData.clientName || ''
+    }));
   };
 
   // 현재 라인 입력 변경
@@ -305,32 +157,7 @@ function VoucherTable({ searchDates }) {
       return;
     }
 
-    if (name === 'clientCode') {
-      const client = clients.find(c => c.client_code === value);
-      if (client) {
-        setCurrentLine(prev => ({
-          ...prev,
-          clientCode: value,
-          clientName: client.client_name,
-          clientId: client.client_id
-        }));
-      } else {
-        // 거래처코드가 없어도 입력값은 유지
-        setCurrentLine(prev => ({
-          ...prev,
-          clientCode: value
-          // clientName과 clientId는 그대로 유지
-        }));
-      }
-    } else if (name === 'clientName') {
-      // 거래처명 직접 입력 가능 (거래처코드 없이도 저장 가능)
-      setCurrentLine(prev => ({
-        ...prev,
-        clientName: value
-      }));
-    } else {
-      setCurrentLine(prev => ({ ...prev, [name]: value }));
-    }
+    setCurrentLine(prev => ({ ...prev, [name]: value }));
   };
 
   // 라인 추가 (임시 저장)
@@ -621,35 +448,39 @@ function VoucherTable({ searchDates }) {
   };
 
   // 수정 중인 라인 데이터 업데이트
+  // 수정 모드 - AccountInput 컴포넌트로부터 계정 정보 받기
+  const handleEditAccountChange = (lineIndex, accountData) => {
+    setEditFormData(prev => {
+      const newData = [...prev];
+      newData[lineIndex] = {
+        ...newData[lineIndex],
+        accountId: accountData.accountId,
+        accountCode: accountData.accountCode || '',
+        accountName: accountData.accountName || ''
+      };
+      return newData;
+    });
+  };
+
+  // 수정 모드 - ClientInput 컴포넌트로부터 거래처 정보 받기
+  const handleEditClientChange = (lineIndex, clientData) => {
+    setEditFormData(prev => {
+      const newData = [...prev];
+      newData[lineIndex] = {
+        ...newData[lineIndex],
+        clientId: clientData.clientId,
+        clientCode: clientData.clientCode || '',
+        clientName: clientData.clientName || ''
+      };
+      return newData;
+    });
+  };
+
   const handleUpdateEditLine = (lineIndex, field, value) => {
     setEditFormData(prev => {
       const newData = [...prev];
 
-      if (field === 'accountCode') {
-        const account = accounts.find(a => a.account_code === value);
-        if (account) {
-          newData[lineIndex] = {
-            ...newData[lineIndex],
-            accountCode: value,
-            accountName: account.account_name,
-            accountId: account.account_id
-          };
-        } else {
-          newData[lineIndex] = { ...newData[lineIndex], accountCode: value };
-        }
-      } else if (field === 'clientCode') {
-        const client = clients.find(c => c.client_code === value);
-        if (client) {
-          newData[lineIndex] = {
-            ...newData[lineIndex],
-            clientCode: value,
-            clientName: client.client_name,
-            clientId: client.client_id
-          };
-        } else {
-          newData[lineIndex] = { ...newData[lineIndex], clientCode: value };
-        }
-      } else if (field === 'debitAmount' || field === 'creditAmount') {
+      if (field === 'debitAmount' || field === 'creditAmount') {
         const numValue = value.replace(/,/g, '');
         newData[lineIndex] = { ...newData[lineIndex], [field]: numValue };
       } else {
@@ -807,15 +638,6 @@ function VoucherTable({ searchDates }) {
     setShowClientModal(false);
   };
 
-  const handleKeyDown = (e, field) => {
-    if (e.key === 'F2') {
-      e.preventDefault();
-      if (field === 'client') {
-        setShowClientModal(true);
-      }
-    }
-  };
-
   const getVoucherTypeLabel = (type) => {
     const option = voucherTypeOptions.find(o => o.value === type);
     return option ? option.label : type;
@@ -964,54 +786,48 @@ function VoucherTable({ searchDates }) {
                   )}
                 </td>
                 <td>{lineDisplayNo}</td>
-                <td>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editLine.accountCode}
-                      onChange={(e) => handleUpdateEditLine(lineIdx, 'accountCode', e.target.value)}
-                      className={styles.input}
-                    />
-                  ) : (
-                    line.account_code
-                  )}
-                </td>
-                <td>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editLine.accountName}
-                      onChange={(e) => handleUpdateEditLine(lineIdx, 'accountName', e.target.value)}
-                      className={styles.input}
-                    />
-                  ) : (
-                    line.account_name
-                  )}
-                </td>
-                <td>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editLine.clientCode}
-                      onChange={(e) => handleUpdateEditLine(lineIdx, 'clientCode', e.target.value)}
-                      className={styles.input}
-                    />
-                  ) : (
-                    line.client_code || '-'
-                  )}
-                </td>
-                <td>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editLine.clientName}
-                      onChange={(e) => handleUpdateEditLine(lineIdx, 'clientName', e.target.value)}
-                      className={styles.input}
-                    />
-                  ) : (
-                    line.client_name || '-'
-                  )}
-                </td>
+                {isEditing ? (
+                  <SearchInput
+                    items={accounts}
+                    codeValue={editLine.accountCode}
+                    nameValue={editLine.accountName}
+                    idValue={editLine.accountId}
+                    onChange={(accountData) => handleEditAccountChange(lineIdx, accountData)}
+                    onOpenModal={() => setShowAccountModal(true)}
+                    codeField="account_code"
+                    nameField="account_name"
+                    idField="account_id"
+                    outputCodeField="accountCode"
+                    outputNameField="accountName"
+                    outputIdField="accountId"
+                  />
+                ) : (
+                  <>
+                    <td>{line.account_code}</td>
+                    <td>{line.account_name}</td>
+                  </>
+                )}
+                {isEditing ? (
+                  <SearchInput
+                    items={clients}
+                    codeValue={editLine.clientCode}
+                    nameValue={editLine.clientName}
+                    idValue={editLine.clientId}
+                    onChange={(clientData) => handleEditClientChange(lineIdx, clientData)}
+                    onOpenModal={() => setShowClientModal(true)}
+                    codeField="client_code"
+                    nameField="client_name"
+                    idField="client_id"
+                    outputCodeField="clientCode"
+                    outputNameField="clientName"
+                    outputIdField="clientId"
+                  />
+                ) : (
+                  <>
+                    <td>{line.client_code || '-'}</td>
+                    <td>{line.client_name || '-'}</td>
+                  </>
+                )}
                 <td>
                   {isEditing ? (
                     <input
@@ -1246,80 +1062,35 @@ function VoucherTable({ searchDates }) {
               </select>
             </td>
             <td>-</td>
-            <td style={{ position: 'relative' }}>
-              <input
-                ref={accountInputRef}
-                type="text"
-                name="accountCode"
-                value={currentLine.accountCode}
-                onChange={(e) => handleAccountCodeChange(e.target.value)}
-                onKeyDown={handleAccountKeyDown}
-                className={styles.input}
-                placeholder="F2"
-              />
-              {showAccountSuggestions && suggestionType === 'code' && (
-                <div className={styles.autocompleteDropdown}>
-                  {accountSuggestions.map((account, index) => (
-                    <div
-                      key={account.account_id}
-                      className={`${styles.autocompleteItem} ${index === selectedSuggestionIndex ? styles.selected : ''}`}
-                      onClick={() => handleSelectAccountSuggestion(account)}
-                      onMouseEnter={() => setSelectedSuggestionIndex(index)}
-                    >
-                      {account.account_code}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </td>
-            <td style={{ position: 'relative' }}>
-              <input
-                ref={accountNameInputRef}
-                type="text"
-                name="accountName"
-                value={currentLine.accountName}
-                onChange={(e) => handleAccountNameChange(e.target.value)}
-                onKeyDown={handleAccountNameKeyDown}
-                className={styles.input}
-                placeholder="F2"
-              />
-              {showAccountSuggestions && suggestionType === 'name' && (
-                <div className={styles.autocompleteDropdown}>
-                  {accountSuggestions.map((account, index) => (
-                    <div
-                      key={account.account_id}
-                      className={`${styles.autocompleteItem} ${index === selectedSuggestionIndex ? styles.selected : ''}`}
-                      onClick={() => handleSelectAccountSuggestion(account)}
-                      onMouseEnter={() => setSelectedSuggestionIndex(index)}
-                    >
-                      {account.account_name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </td>
-            <td>
-              <input
-                type="text"
-                name="clientCode"
-                value={currentLine.clientCode}
-                onChange={handleCurrentLineChange}
-                onKeyDown={(e) => handleKeyDown(e, 'client')}
-                className={styles.input}
-                placeholder="F2"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                name="clientName"
-                value={currentLine.clientName}
-                onChange={handleCurrentLineChange}
-                onKeyDown={(e) => handleKeyDown(e, 'client')}
-                className={styles.input}
-                placeholder="거래처명 (F2)"
-              />
-            </td>
+            <SearchInput
+              items={accounts}
+              codeValue={currentLine.accountCode}
+              nameValue={currentLine.accountName}
+              idValue={currentLine.accountId}
+              onChange={handleAccountChange}
+              onOpenModal={() => setShowAccountModal(true)}
+              codeField="account_code"
+              nameField="account_name"
+              idField="account_id"
+              outputCodeField="accountCode"
+              outputNameField="accountName"
+              outputIdField="accountId"
+            />
+            <SearchInput
+              items={clients}
+              codeValue={currentLine.clientCode}
+              nameValue={currentLine.clientName}
+              idValue={currentLine.clientId}
+              onChange={handleClientChange}
+              onOpenModal={() => setShowClientModal(true)}
+              codeField="client_code"
+              nameField="client_name"
+              idField="client_id"
+              outputCodeField="clientCode"
+              outputNameField="clientName"
+              outputIdField="clientId"
+              namePlaceholder="거래처명 (F2)"
+            />
             <td>
               <input
                 type="text"

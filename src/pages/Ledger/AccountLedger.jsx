@@ -5,6 +5,7 @@ import { deleteVoucher as deleteGeneralVoucher } from '../../api/voucherApi';
 import { getClientsByCompany } from '../../api/clientApi';
 import AccountSearchModal from '../Voucher/AccountSearchModal';
 import ClientSearchModal from '../Voucher/ClientSearchModal';
+import SearchInput from '../../components/SearchInput';
 import styles from './AccountLedger.module.css';
 
 function AccountLedger() {
@@ -29,15 +30,17 @@ function AccountLedger() {
   const [editFormData, setEditFormData] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [clients, setClients] = useState([]);
-  const [accountSuggestions, setAccountSuggestions] = useState({});
-  const [showAccountSuggestions, setShowAccountSuggestions] = useState({});
-  const [clientSuggestions, setClientSuggestions] = useState({});
-  const [showClientSuggestions, setShowClientSuggestions] = useState({});
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState({});
-  const [suggestionType, setSuggestionType] = useState({});
-  const [dropdownPosition, setDropdownPosition] = useState({});
   const inputRefs = useRef({});
   const [fiscalYearDisplay, setFiscalYearDisplay] = useState('');
+
+  // 자동완성 관련 상태
+  const [showAccountSuggestions, setShowAccountSuggestions] = useState({});
+  const [accountSuggestions, setAccountSuggestions] = useState({});
+  const [showClientSuggestions, setShowClientSuggestions] = useState({});
+  const [clientSuggestions, setClientSuggestions] = useState({});
+  const [suggestionType, setSuggestionType] = useState({});
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState({});
+  const [dropdownPosition, setDropdownPosition] = useState({});
 
   const fetchAccountSummary = async () => {
     try {
@@ -272,6 +275,32 @@ function AccountLedger() {
       newData[lineIndex] = {
         ...newData[lineIndex],
         [field]: value
+      };
+      return newData;
+    });
+  };
+
+  // SearchInput을 위한 계정 변경 핸들러
+  const handleEditAccountChange = (lineIndex, accountData) => {
+    setEditFormData(prev => {
+      const newData = [...prev];
+      newData[lineIndex] = {
+        ...newData[lineIndex],
+        account_code: accountData.account_code || '',
+        account_name: accountData.account_name || ''
+      };
+      return newData;
+    });
+  };
+
+  // SearchInput을 위한 거래처 변경 핸들러
+  const handleEditClientChange = (lineIndex, clientData) => {
+    setEditFormData(prev => {
+      const newData = [...prev];
+      newData[lineIndex] = {
+        ...newData[lineIndex],
+        client_code: clientData.client_code || '',
+        client_name: clientData.client_name || ''
       };
       return newData;
     });
@@ -885,125 +914,43 @@ function AccountLedger() {
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td style={{position: 'relative'}}>
-                                  {isVoucherEditing ? (
-                                    <>
-                                      <input
-                                        ref={(el) => {
-                                          if (el) inputRefs.current[`account-${editLineIndex}`] = el;
-                                        }}
-                                        type="text"
-                                        value={currentEditData.account_code}
-                                        onChange={(e) => handleAccountCodeChange(editLineIndex, e.target.value)}
-                                        onKeyDown={(e) => handleAccountKeyDown(e, editLineIndex)}
-                                        onFocus={(e) => calculateDropdownPosition(e.target, `account-${editLineIndex}`)}
-                                        onBlur={() => {
-                                          setTimeout(() => {
-                                            setShowAccountSuggestions(prev => ({ ...prev, [editLineIndex]: false }));
-                                          }, 200);
-                                        }}
-                                        className={styles.editInput}
-                                        style={{width: '60px'}}
-                                        placeholder="F2"
-                                      />
-                                      {showAccountSuggestions[editLineIndex] && suggestionType[editLineIndex] === 'code' && accountSuggestions[editLineIndex]?.length > 0 && (
-                                        <div className={styles.autocompleteDropdown}>
-                                          {accountSuggestions[editLineIndex].map((acc, idx) => (
-                                            <div
-                                              key={acc.account_id}
-                                              className={`${styles.autocompleteItem} ${idx === (selectedSuggestionIndex[editLineIndex] ?? -1) ? styles.selected : ''}`}
-                                              onMouseDown={(e) => {
-                                                e.preventDefault();
-                                                handleSelectAccountSuggestion(editLineIndex, acc);
-                                              }}
-                                            >
-                                              {acc.account_code} - {acc.account_name}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </>
-                                  ) : (
-                                    line.account_code
-                                  )}
-                                </td>
-                                <td style={{position: 'relative'}}>
-                                  {isVoucherEditing ? (
-                                    <input
-                                      type="text"
-                                      value={currentEditData.account_name}
-                                      readOnly
-                                      className={styles.editInput}
-                                      style={{width: '110px', backgroundColor: '#f5f5f5'}}
-                                    />
-                                  ) : (
-                                    line.account_name
-                                  )}
-                                </td>
-                                <td style={{position: 'relative'}}>
-                                  {isVoucherEditing ? (
-                                    <>
-                                      <input
-                                        ref={(el) => {
-                                          if (el) inputRefs.current[`client-${editLineIndex}`] = el;
-                                        }}
-                                        type="text"
-                                        value={currentEditData.client_code || ''}
-                                        onChange={(e) => handleClientCodeChange(editLineIndex, e.target.value)}
-                                        onKeyDown={(e) => handleClientKeyDown(e, editLineIndex)}
-                                        onFocus={(e) => calculateDropdownPosition(e.target, `client-${editLineIndex}`)}
-                                        onBlur={() => {
-                                          setTimeout(() => {
-                                            setShowClientSuggestions(prev => ({ ...prev, [editLineIndex]: false }));
-                                          }, 200);
-                                        }}
-                                        className={styles.editInput}
-                                        style={{width: '60px'}}
-                                        placeholder="F2"
-                                      />
-                                      {showClientSuggestions[editLineIndex] && clientSuggestions[editLineIndex]?.length > 0 && (
-                                        <div className={styles.autocompleteDropdown}>
-                                          {clientSuggestions[editLineIndex].map((client, idx) => (
-                                            <div
-                                              key={client.client_id}
-                                              className={styles.autocompleteItem}
-                                              onMouseDown={(e) => {
-                                                e.preventDefault();
-                                                setEditFormData(prev => {
-                                                  const newData = [...prev];
-                                                  newData[editLineIndex] = {
-                                                    ...newData[editLineIndex],
-                                                    client_code: client.client_code,
-                                                    client_name: client.client_name
-                                                  };
-                                                  return newData;
-                                                });
-                                                setShowClientSuggestions(prev => ({ ...prev, [editLineIndex]: false }));
-                                              }}
-                                            >
-                                              {client.client_code} - {client.client_name}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </>
-                                  ) : (
-                                    line.client_code || '-'
-                                  )}
-                                </td>
-                                <td>
-                                  {isVoucherEditing ? (
-                                    <input
-                                      type="text"
-                                      value={currentEditData.client_name || ''}
-                                      onChange={(e) => handleEditFormChange(editLineIndex, 'client_name', e.target.value)}
-                                      className={styles.editInput}
-                                      style={{width: '90px'}}
-                                    />
-                                  ) : (
-                                    line.client_name || '-'
-                                  )}
-                                </td>
+                                {isVoucherEditing ? (
+                                  <SearchInput
+                                    items={accounts}
+                                    codeValue={currentEditData.account_code}
+                                    nameValue={currentEditData.account_name}
+                                    idValue={null}
+                                    onChange={(accountData) => handleEditAccountChange(editLineIndex, accountData)}
+                                    onOpenModal={() => setShowAccountModal(true)}
+                                    codeField="account_code"
+                                    nameField="account_name"
+                                    idField="account_id"
+                                  />
+                                ) : (
+                                  <>
+                                    <td>{line.account_code}</td>
+                                    <td>{line.account_name}</td>
+                                  </>
+                                )}
+                                {isVoucherEditing ? (
+                                  <SearchInput
+                                    items={clients}
+                                    codeValue={currentEditData.client_code || ''}
+                                    nameValue={currentEditData.client_name || ''}
+                                    idValue={null}
+                                    onChange={(clientData) => handleEditClientChange(editLineIndex, clientData)}
+                                    onOpenModal={() => setShowClientModal(true)}
+                                    codeField="client_code"
+                                    nameField="client_name"
+                                    idField="client_id"
+                                    namePlaceholder="거래처명 (F2)"
+                                  />
+                                ) : (
+                                  <>
+                                    <td>{line.client_code || '-'}</td>
+                                    <td>{line.client_name || '-'}</td>
+                                  </>
+                                )}
                                 <td className={styles.amount}>
                                   {isVoucherEditing ? (
                                     <input
