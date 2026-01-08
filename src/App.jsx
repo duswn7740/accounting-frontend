@@ -6,7 +6,7 @@ import './App.css'
 import Layout from './layout/Layout';
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Register from './pages/auth/Register'
-import Home from './pages/Home'
+import Dashboard from './pages/Dashboard/Dashboard'
 import Header from './layout/Header'
 import Login from './pages/auth/Login'
 import CompanyManage from './pages/MyPage/CompanyManage'
@@ -40,7 +40,7 @@ function App() {
         
         {/* Layout 적용 (Header + Sidebar) */}
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Dashboard />} />
           
           {/* 마이페이지 */}
           <Route path="mypage/profile" element={<Profile />} />

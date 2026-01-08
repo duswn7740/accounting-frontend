@@ -23,7 +23,7 @@ function Header() {
     if (companyName) {
       setCurrentCompany(companyName);
     } else {
-      fetch(`/api/companies/${userData.companyId}`, {
+      fetch(`http://localhost:8000/api/companies/${userData.companyId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -43,7 +43,7 @@ function Header() {
     }
 
     // 회계기수 목록 가져오기
-    fetch(`/api/companies/${userData.companyId}/fiscal-periods`, {
+    fetch(`http://localhost:8000/api/companies/${userData.companyId}/fiscal-periods`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
