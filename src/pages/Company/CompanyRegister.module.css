@@ -39,27 +39,6 @@
   gap: 10px;
 }
 
-.checkButton {
-  padding: 10px 20px;
-  background-color: #2ecc71;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: background-color 0.2s;
-}
-
-.checkButton:hover {
-  background-color: #27ae60;
-}
-
-.checkButton:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
 .errorMessage {
   color: #e74c3c;
   font-size: 13px;
@@ -78,18 +57,8 @@
   margin-top: 30px;
 }
 
-.addressButton {
-  padding: 10px 20px;
-  background-color: #9b59b6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: background-color 0.2s;
-}
-
-.addressButton:hover {
-  background-color: #8e44ad;
+.helperText {
+  color: #7f8c8d;
+  font-size: 13px;
+  margin-top: 5px;
 }

@@ -4,6 +4,7 @@ import * as salesPurchaseApi from '@/api/salesPurchaseApi';
 import * as accountApi from '@/api/accountApi';
 import AccountSearchModal from '../Voucher/AccountSearchModal';
 import ClientSearchModal from '../Voucher/ClientSearchModal';
+import Button from '../../components/Button';
 import styles from './SalesPurchaseVoucher.module.css';
 
 function SalesPurchaseVoucher() {
@@ -309,12 +310,12 @@ function SalesPurchaseVoucher() {
                 placeholder="거래처를 선택하세요"
                 className={styles.input}
               />
-              <button
+              <Button
                 onClick={() => setShowClientModal(true)}
-                className={styles.searchButton}
+                variant="search"
               >
                 검색
-              </button>
+              </Button>
             </div>
           </div>
 

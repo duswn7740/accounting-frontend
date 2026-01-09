@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerCompany, checkBusinessNumber } from '../../api/companyApi';
 import { formatBusinessNumber, formatCompanyTel, formatFiscalYearEnd, validateCompanyRegister } from '../../utils/companyValidate';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
 import styles from './CompanyRegister.module.css';
 
 function CompanyRegister() {
@@ -152,7 +154,7 @@ function CompanyRegister() {
             사업자번호<span className={styles.required}>*</span>
           </label>
           <div className={styles.inputWrapper}>
-            <input
+            <Input
               type="text"
               name="businessNumber"
               placeholder="000-00-00000"
@@ -161,16 +163,14 @@ function CompanyRegister() {
                 handleChange(e);
                 handleOnChange(e);
               }}
-              className={styles.input}
-              required
             />
-            <button
+            <Button
               type="button"
               onClick={handleCheckBusinessNumber}
-              className={styles.checkButton}
+              variant="check"
             >
               중복 확인
-            </button>
+            </Button>
           </div>
           <p className={styles.errorMessage}>{errorMsg.businessNumber}</p>
         </div>
@@ -179,7 +179,7 @@ function CompanyRegister() {
           <label className={styles.label}>
             상호<span className={styles.required}>*</span>
           </label>
-          <input
+          <Input
             type="text"
             name="companyName"
             placeholder="홍길동 상사"
@@ -188,57 +188,52 @@ function CompanyRegister() {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
-            required
           />
           <p className={styles.errorMessage}>{errorMsg.companyName}</p>
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>대표자명</label>
-          <input
+          <Input
             type="text"
             name="ceoName"
             placeholder="홍길동"
             value={formData.ceoName}
             onChange={handleChange}
-            className={styles.input}
           />
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>주소</label>
           <div className={styles.inputWrapper}>
-            <input
+            <Input
               type="text"
               name="address"
               placeholder="주소"
               value={formData.address}
               readOnly
-              className={styles.input}
             />
-            <button
+            <Button
               type="button"
               onClick={handleSearchAddress}
-              className={styles.addressButton}
+              variant="address"
             >
               주소 검색
-            </button>
+            </Button>
           </div>
-          <input
+          <Input
             type="text"
             name="addressDetail"
             placeholder="상세주소"
             value={formData.addressDetail}
             onChange={handleChange}
-            className={styles.input}
             style={{ marginTop: '8px' }}
           />
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>전화번호</label>
-          <input
+          <Input
             type="text"
             name="tel"
             placeholder="02-0000-0000 또는 000-0000-0000"
@@ -247,40 +242,36 @@ function CompanyRegister() {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
           />
           <p className={styles.errorMessage}>{errorMsg.tel}</p>
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>업종</label>
-          <input
+          <Input
             type="text"
             name="industry"
             placeholder="제조업"
             value={formData.industry}
             onChange={handleChange}
-            className={styles.input}
           />
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>
             개업일<span className={styles.required}>*</span>
           </label>
-          <input
+          <Input
             type="date"
             name="openingDate"
             value={formData.openingDate}
             onChange={handleChange}
-            className={styles.input}
-            required
           />
         </div>
 
         <div className={styles.formGroup}>
           <label className={styles.label}>회계연도 마감일 (MM-DD)</label>
-          <input
+          <Input
             type="text"
             name="fiscalYearEnd"
             placeholder="12-31"
@@ -289,7 +280,6 @@ function CompanyRegister() {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
           />
           <p className={styles.errorMessage}>{errorMsg.fiscalYearEnd}</p>
           <p className={styles.helperText}>
@@ -298,21 +288,23 @@ function CompanyRegister() {
         </div>
 
         <div className={styles.buttonGroup}>
-          <button
+          <Button
             type="submit"
             disabled={!isFormValid() || loading}
-            className={styles.submitButton}
+            variant="primary"
+            size="large"
           >
             {loading ? '등록 중...' : '회사 등록'}
-          </button>
-          
-          <button
+          </Button>
+
+          <Button
             type="button"
             onClick={() => nav('/')}
-            className={styles.cancelButton}
+            variant="secondary"
+            size="large"
           >
             취소
-          </button>
+          </Button>
         </div>
       </form>
     </div>
