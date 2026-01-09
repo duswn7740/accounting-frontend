@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkEmail, register } from '../../api/authApi';
 import { validateRegister, formatPhone } from '../../utils/registerValidate';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
 import styles from './Register.module.css';
 
 function Register() {
@@ -127,25 +129,23 @@ function Register() {
             이메일<span className={styles.required}>*</span>
           </label>
           <div className={styles.inputWrapper}>
-            <input
+            <Input
               type="email"
-              placeholder="이메일"
+              placeholder="이메일을 입력하세요"
               name="email"
               value={formData.email}
               onChange={(e) => {
                 handleChange(e);
                 handleOnChange(e);
               }}
-              className={styles.input}
-              required
             />
-            <button
+            <Button
               type="button"
+              variant="check"
               onClick={handleCheckEmail}
-              className={styles.checkButton}
             >
               중복 확인
-            </button>
+            </Button>
           </div>
           <p className={styles.errorMessage}>{errorMsg.email}</p>
         </div>
@@ -154,85 +154,90 @@ function Register() {
           <label className={styles.label}>
             비밀번호<span className={styles.required}>*</span>
           </label>
-          <input
+          <Input
             type="password"
             name="password"
-            placeholder="비밀번호"
+            placeholder="비밀번호를 입력하세요"
             value={formData.password}
             onChange={(e) => {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
-            required
           />
           <p className={styles.errorMessage}>{errorMsg.password}</p>
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>
             비밀번호 확인<span className={styles.required}>*</span>
           </label>
-          <input
+          <Input
             type="password"
             name="passwordConfirm"
-            placeholder="비밀번호 확인"
+            placeholder="비밀번호를 다시 입력하세요"
             value={formData.passwordConfirm}
             onChange={(e) => {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
-            required
           />
           <p className={styles.errorMessage}>{errorMsg.passwordConfirm}</p>
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>
             이름<span className={styles.required}>*</span>
           </label>
-          <input
+          <Input
             type="text"
             name="name"
-            placeholder="이름"
+            placeholder="이름을 입력하세요"
             value={formData.name}
             onChange={(e) => {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
-            required
           />
           <p className={styles.errorMessage}>{errorMsg.name}</p>
         </div>
-        
+
         <div className={styles.formGroup}>
           <label className={styles.label}>연락처</label>
-          <input
+          <Input
             type="text"
             name="phone"
-            placeholder="연락처"
+            placeholder="010-0000-0000"
             value={formData.phone}
             onChange={(e) => {
               handleChange(e);
               handleOnChange(e);
             }}
-            className={styles.input}
           />
           <p className={styles.errorMessage}>{errorMsg.phone}</p>
         </div>
         
         <div className={styles.buttonGroup}>
-          <button
+          <Button
             type="submit"
+            variant="primary"
+            size="large"
             disabled={isDuplicated || loading}
-            className={styles.submitButton}
           >
             {loading ? '가입 중...' : '회원가입'}
-          </button>
+          </Button>
         </div>
       </form>
+
+      <div className={styles.loginPrompt}>
+        이미 계정이 있으신가요?
+        <button
+          type="button"
+          className={styles.loginLink}
+          onClick={() => nav('/login')}
+        >
+          로그인하기
+        </button>
+      </div>
     </div>
   );
 }

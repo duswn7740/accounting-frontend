@@ -5,6 +5,10 @@ import { getClientsByCompany } from '@/api/clientApi';
 import AccountSearchModal from '../Voucher/AccountSearchModal';
 import ClientSearchModal from '../Voucher/ClientSearchModal';
 import SearchInput from '../../components/SearchInput';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import Select from '../../components/Select';
+import Badge from '../../components/Badge';
 import styles from './SalesPurchaseTable.module.css';
 
 function SalesPurchaseTable({ searchDates }) {
@@ -823,9 +827,9 @@ function SalesPurchaseTable({ searchDates }) {
                     <td>{new Date(voucher.voucher_date).getMonth() + 1}</td>
                     <td>{new Date(voucher.voucher_date).getDate()}</td>
                     <td>
-                      <span className={`${styles.badge} ${styles[voucher.voucher_type]}`}>
+                      <Badge variant={voucher.voucher_type}>
                         {voucher.voucher_type}
-                      </span>
+                      </Badge>
                     </td>
                     <td>{voucherNo}</td>
                     <td>{voucher.account_code || '-'}</td>
@@ -846,39 +850,43 @@ function SalesPurchaseTable({ searchDates }) {
                       <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
                         {isEditing ? (
                           <>
-                            <button
-                              className={styles.saveButton}
+                            <Button
+                              variant="success"
+                              size="small"
                               onClick={handleSaveEdit}
                             >
                               저장
-                            </button>
-                            <button
-                              className={styles.cancelButton}
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              size="small"
                               onClick={handleCancelEdit}
                             >
                               취소
-                            </button>
+                            </Button>
                           </>
                         ) : (
                           <>
-                            <button
-                              className={styles.editButton}
+                            <Button
+                              variant="primary"
+                              size="small"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleEditVoucher(voucher.voucher_id);
                               }}
                             >
                               수정
-                            </button>
-                            <button
-                              className={styles.deleteButton}
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="small"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteVoucher(voucher.voucher_id, voucherNo);
                               }}
                             >
                               삭제
-                            </button>
+                            </Button>
                           </>
                         )}
                       </div>
@@ -936,7 +944,7 @@ function SalesPurchaseTable({ searchDates }) {
                   {isEditing && editFormData.map((editLine, lineIdx) => (
                     <tr key={`edit-${voucher.voucher_id}-${lineIdx}`} className={styles.editingLine}>
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={editLine.month}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'month', e.target.value)}
@@ -944,7 +952,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={editLine.day}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'day', e.target.value)}
@@ -952,7 +960,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td>
-                        <select
+                        <Select
                           value={editLine.voucherType}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'voucherType', e.target.value)}
                           className={styles.input}
@@ -962,7 +970,7 @@ function SalesPurchaseTable({ searchDates }) {
                               {option}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </td>
                       <td>{voucherNo}</td>
                       <SearchInput
@@ -992,7 +1000,7 @@ function SalesPurchaseTable({ searchDates }) {
                         outputIdField="clientId"
                       />
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={formatBusinessNumber(editLine.clientBusinessNo)}
                           onChange={(e) => {handleUpdateEditLine(lineIdx, 'clientBusinessNo', e.target.value)}}
@@ -1001,7 +1009,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td className={styles.amount}>
-                        <input
+                        <Input
                           type="text"
                           value={formatAmount(editLine.debitAmount)}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'debitAmount', e.target.value)}
@@ -1009,7 +1017,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td className={styles.amount}>
-                        <input
+                        <Input
                           type="text"
                           value={formatAmount(editLine.creditAmount)}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'creditAmount', e.target.value)}
@@ -1017,7 +1025,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={editLine.taxInvoiceYn ? '전자' : ''}
                           onChange={(e) => {
@@ -1028,7 +1036,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={editLine.descriptionCode}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'descriptionCode', e.target.value)}
@@ -1036,7 +1044,7 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td>
-                        <input
+                        <Input
                           type="text"
                           value={editLine.description}
                           onChange={(e) => handleUpdateEditLine(lineIdx, 'description', e.target.value)}
@@ -1044,12 +1052,13 @@ function SalesPurchaseTable({ searchDates }) {
                         />
                       </td>
                       <td>
-                        <button
-                          className={styles.deleteButton}
+                        <Button
+                          variant="danger"
+                          size="small"
                           onClick={() => handleRemoveEditLine(lineIdx)}
                         >
                           삭제
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -1058,12 +1067,13 @@ function SalesPurchaseTable({ searchDates }) {
                   {isEditing && (
                     <tr className={styles.addLineRow}>
                       <td colSpan="15" style={{ textAlign: 'center', padding: '8px' }}>
-                        <button
-                          className={styles.addButton}
+                        <Button
+                          variant="primary"
+                          size="small"
                           onClick={handleAddEditLine}
                         >
                           + 라인 추가
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   )}
@@ -1097,9 +1107,9 @@ function SalesPurchaseTable({ searchDates }) {
                     <td>{line.month}</td>
                     <td>{line.day}</td>
                     <td>
-                      <span className={`${styles.badge} ${styles[line.voucherType]}`}>
+                      <Badge variant={line.voucherType}>
                         {line.voucherType}
-                      </span>
+                      </Badge>
                     </td>
                     <td>{line.debitCredit}</td>
                     <td>{line.accountCode}</td>
@@ -1113,12 +1123,13 @@ function SalesPurchaseTable({ searchDates }) {
                     <td>{line.descriptionCode || '-'}</td>
                     <td>{line.description || '-'}</td>
                     <td>
-                      <button
-                        className={styles.deleteButton}
+                      <Button
+                        variant="danger"
+                        size="small"
                         onClick={() => handleDeleteTempLine(index)}
                       >
                         삭제
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -1164,7 +1175,7 @@ function SalesPurchaseTable({ searchDates }) {
                 {/* 새 라인 입력 */}
                 <tr className={styles.newLineRow}>
               <td>
-                <input
+                <Input
                   ref={monthInputRef}
                   type="text"
                   value={currentLine.month}
@@ -1174,7 +1185,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={currentLine.day}
                   onChange={(e) => handleCurrentLineChange('day', e.target.value)}
@@ -1183,7 +1194,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <select
+                <Select
                   value={currentLine.voucherType}
                   onChange={(e) => handleCurrentLineChange('voucherType', e.target.value)}
                   className={styles.input}
@@ -1193,17 +1204,17 @@ function SalesPurchaseTable({ searchDates }) {
                       {option}
                     </option>
                   ))}
-                </select>
+                </Select>
               </td>
               <td>
-                <select
+                <Select
                   value={currentLine.debitCredit}
                   onChange={(e) => handleCurrentLineChange('debitCredit', e.target.value)}
                   className={styles.input}
                 >
                   <option value="차변">차변</option>
                   <option value="대변">대변</option>
-                </select>
+                </Select>
               </td>
               <SearchInput
                 items={accounts}
@@ -1233,7 +1244,7 @@ function SalesPurchaseTable({ searchDates }) {
                 namePlaceholder="거래처 (F2)"
               />
               <td>
-                <input
+                <Input
                   type="text"
                   value={formatBusinessNumber(currentLine.clientBusinessNo)}
                   readOnly
@@ -1241,7 +1252,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={formatAmount(currentLine.debitAmount)}
                   onChange={(e) => handleCurrentLineChange('debitAmount', e.target.value.replace(/,/g, ''))}
@@ -1252,7 +1263,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={formatAmount(currentLine.creditAmount)}
                   onChange={(e) => handleCurrentLineChange('creditAmount', e.target.value.replace(/,/g, ''))}
@@ -1263,7 +1274,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={currentLine.taxInvoiceYn ? '전자' : ''}
                   onChange={(e) => {
@@ -1275,7 +1286,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={currentLine.descriptionCode}
                   onChange={(e) => handleCurrentLineChange('descriptionCode', e.target.value)}
@@ -1284,7 +1295,7 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={currentLine.description}
                   onChange={(e) => handleCurrentLineChange('description', e.target.value)}
@@ -1294,12 +1305,13 @@ function SalesPurchaseTable({ searchDates }) {
                 />
               </td>
               <td>
-                <button
-                  className={styles.addButton}
+                <Button
+                  variant="primary"
+                  size="small"
                   onClick={handleAddLine}
                 >
                   추가
-                </button>
+                </Button>
               </td>
             </tr>
             </>
@@ -1310,19 +1322,21 @@ function SalesPurchaseTable({ searchDates }) {
       {/* 액션 버튼 - 수정 모드가 아닐 때만 */}
       {!editingVoucherId && tempLines.length > 0 && (
         <div className={styles.actionButtons}>
-          <button
-            className={styles.cancelButton}
+          <Button
+            variant="secondary"
+            size="medium"
             onClick={handleCancelTempLines}
           >
             취소
-          </button>
-          <button
-            className={styles.saveVoucherButton}
+          </Button>
+          <Button
+            variant="success"
+            size="medium"
             onClick={handleSaveVoucher}
             disabled={!totals.balanced}
           >
             전표 저장
-          </button>
+          </Button>
         </div>
       )}
 

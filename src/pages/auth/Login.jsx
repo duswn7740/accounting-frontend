@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/authApi';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import styles from './Login.module.css';
 
 function Login() {
   const nav = useNavigate();
@@ -80,38 +83,58 @@ function Login() {
   };
   
   return (
-    <div>
-      <h1>로그인</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="이메일"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        
-        <input
-          type="password"
-          name="password"
-          placeholder="비밀번호"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        
-        <button type="submit" disabled={loading}>
-          {loading ? '로그인 중...' : '로그인'}
-        </button>
+    <div className={styles.container}>
+      <h1 className={styles.title}>로그인</h1>
+
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>이메일</label>
+          <Input
+            type="email"
+            name="email"
+            placeholder="이메일을 입력하세요"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>비밀번호</label>
+          <Input
+            type="password"
+            name="password"
+            placeholder="비밀번호를 입력하세요"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        {error && <p className={styles.errorMessage}>{error}</p>}
+
+        <div className={styles.buttonGroup}>
+          <Button
+            type="submit"
+            variant="primary"
+            size="large"
+            disabled={loading}
+          >
+            {loading ? '로그인 중...' : '로그인'}
+          </Button>
+        </div>
       </form>
-      
-      <p>
-        계정이 없으신가요? 
-        <button type="button" onClick={() => nav('/register')}>
-          회원가입
+
+      <div className={styles.divider}>또는</div>
+
+      <div className={styles.registerPrompt}>
+        계정이 없으신가요?
+        <button
+          type="button"
+          className={styles.registerLink}
+          onClick={() => nav('/register')}
+        >
+          회원가입하기
         </button>
-      </p>
+      </div>
     </div>
   );
 }

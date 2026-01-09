@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { createAccount, updateAccount } from '../../api/accountApi';
 import { validateAccountBasic, checkAccountCodeDuplicate } from '../../utils/accountValidate';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import Select from '../../components/Select';
 import styles from './AccountModal.module.css';
 
 function AccountModal({ account, onClose }) {
@@ -125,14 +128,13 @@ function AccountModal({ account, onClose }) {
             <label className={styles.label}>
               계정코드<span className={styles.required}>*</span>
             </label>
-            <input
+            <Input
               type="text"
               name="accountCode"
               value={formData.accountCode}
               onChange={handleChange}
               placeholder="예: 101"
               disabled={!!account}
-              className={styles.input}
             />
             {account && <small>* 계정코드는 수정할 수 없습니다</small>}
             <p className={styles.errorMessage}>{errorMsg.accountCode}</p>
@@ -142,13 +144,12 @@ function AccountModal({ account, onClose }) {
             <label className={styles.label}>
               계정과목명<span className={styles.required}>*</span>
             </label>
-            <input
+            <Input
               type="text"
               name="accountName"
               value={formData.accountName}
               onChange={handleChange}
               placeholder="예: 현금"
-              className={styles.input}
             />
             <p className={styles.errorMessage}>{errorMsg.accountName}</p>
           </div>
@@ -157,28 +158,26 @@ function AccountModal({ account, onClose }) {
             <label className={styles.label}>
               계정유형<span className={styles.required}>*</span>
             </label>
-            <select
+            <Select
               name="accountType"
               value={formData.accountType}
               onChange={handleChange}
-              className={styles.input}
             >
               {accountTypes.map(type => (
                 <option key={type} value={type}>{type}</option>
               ))}
-            </select>
+            </Select>
             <p className={styles.errorMessage}>{errorMsg.accountType}</p>
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>세부분류</label>
-            <input
+            <Input
               type="text"
               name="accountCategory"
               value={formData.accountCategory}
               onChange={handleChange}
               placeholder="예: 유동자산, 자산차감, 제조원가"
-              className={styles.input}
             />
             <small>유동자산, 재고자산, 자산증가, 자산차감, 부채증가, 부채차감 등 자유롭게 입력</small>
           </div>
@@ -209,12 +208,12 @@ function AccountModal({ account, onClose }) {
           </div>
 
           <div className={styles.buttonGroup}>
-            <button type="button" className={styles.cancelButton} onClick={() => onClose(false)}>
+            <Button type="button" variant="secondary" onClick={() => onClose(false)}>
               취소
-            </button>
-            <button type="submit" className={styles.submitButton} disabled={loading}>
+            </Button>
+            <Button type="submit" variant="primary" disabled={loading}>
               {loading ? '저장 중...' : (account ? '수정' : '추가')}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

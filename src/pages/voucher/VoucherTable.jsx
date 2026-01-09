@@ -5,6 +5,9 @@ import { getClientsByCompany } from '../../api/clientApi';
 import AccountSearchModal from './AccountSearchModal';
 import ClientSearchModal from './ClientSearchModal';
 import SearchInput from '../../components/SearchInput';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import Select from '../../components/Select';
 import styles from './VoucherTable.module.css';
 
 function VoucherTable({ searchDates }) {
@@ -686,33 +689,37 @@ function VoucherTable({ searchDates }) {
                   <div className={styles.voucherActions}>
                     {editingVoucherId === voucherLines[0].voucher_id ? (
                       <>
-                        <button
-                          className={styles.saveButton}
+                        <Button
+                          variant="success"
+                          size="small"
                           onClick={handleSaveEdit}
                         >
                           저장
-                        </button>
-                        <button
-                          className={styles.cancelButton}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="small"
                           onClick={handleCancelEdit}
                         >
                           취소
-                        </button>
+                        </Button>
                       </>
                     ) : (
                       <>
-                        <button
-                          className={styles.editButton}
+                        <Button
+                          variant="primary"
+                          size="small"
                           onClick={() => handleEditVoucher(fullVoucherNo)}
                         >
                           수정
-                        </button>
-                        <button
-                          className={styles.deleteButton}
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="small"
                           onClick={() => handleDeleteVoucher(fullVoucherNo)}
                         >
                           삭제
-                        </button>
+                        </Button>
                       </>
                     )}
                   </div>
@@ -732,7 +739,7 @@ function VoucherTable({ searchDates }) {
               <tr key={line.line_id} className={isEditing ? styles.editingLine : ''}>
                 <td>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={editLine.month}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'month', e.target.value)}
@@ -744,7 +751,7 @@ function VoucherTable({ searchDates }) {
                 </td>
                 <td>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={editLine.day}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'day', e.target.value)}
@@ -756,7 +763,7 @@ function VoucherTable({ searchDates }) {
                 </td>
                 <td>
                   {isEditing ? (
-                    <select
+                    <Select
                       value={editLine.voucherType}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'voucherType', e.target.value)}
                       className={styles.input}
@@ -766,7 +773,7 @@ function VoucherTable({ searchDates }) {
                           {option.label}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   ) : (
                     getVoucherTypeLabel(line.voucher_type)
                   )}
@@ -814,7 +821,7 @@ function VoucherTable({ searchDates }) {
                 )}
                 <td>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={formatAmount(editLine.debitAmount)}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'debitAmount', e.target.value)}
@@ -826,7 +833,7 @@ function VoucherTable({ searchDates }) {
                 </td>
                 <td>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={formatAmount(editLine.creditAmount)}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'creditAmount', e.target.value)}
@@ -838,7 +845,7 @@ function VoucherTable({ searchDates }) {
                 </td>
                 <td>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={editLine.descriptionCode}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'descriptionCode', e.target.value)}
@@ -850,7 +857,7 @@ function VoucherTable({ searchDates }) {
                 </td>
                 <td>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={editLine.description}
                       onChange={(e) => handleUpdateEditLine(lineIdx, 'description', e.target.value)}
@@ -862,12 +869,13 @@ function VoucherTable({ searchDates }) {
                 </td>
                 <td>
                   {isEditing && (
-                    <button
-                      className={styles.deleteButton}
+                    <Button
+                      variant="danger"
+                      size="small"
                       onClick={() => handleRemoveEditLine(lineIdx)}
                     >
                       삭제
-                    </button>
+                    </Button>
                   )}
                 </td>
               </tr>
@@ -877,12 +885,13 @@ function VoucherTable({ searchDates }) {
             editingVoucherId === voucherLines[0].voucher_id && (
               <tr key={`voucher-${voucherKey}-add`} className={styles.addLineRow}>
                 <td colSpan="13" style={{ textAlign: 'center', padding: '8px' }}>
-                  <button
-                    className={styles.addButton}
+                  <Button
+                    variant="primary"
+                    size="small"
                     onClick={handleAddEditLine}
                   >
                     + 라인 추가
-                  </button>
+                  </Button>
                 </td>
               </tr>
             )
@@ -902,7 +911,7 @@ function VoucherTable({ searchDates }) {
               <td>{line.month}</td>
               <td>{line.day}</td>
               <td>
-                <select
+                <Select
                   value={line.voucherType}
                   onChange={(e) => handleUpdateTempLine(index, 'voucherType', e.target.value)}
                   className={styles.input}
@@ -912,11 +921,11 @@ function VoucherTable({ searchDates }) {
                       {option.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </td>
               <td>(임시)</td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={line.accountCode}
                   onChange={(e) => handleUpdateTempLine(index, 'accountCode', e.target.value)}
@@ -924,7 +933,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={line.accountName}
                   onChange={(e) => handleUpdateTempLine(index, 'accountName', e.target.value)}
@@ -932,7 +941,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={line.clientCode || ''}
                   onChange={(e) => handleUpdateTempLine(index, 'clientCode', e.target.value)}
@@ -940,7 +949,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={line.clientName || ''}
                   onChange={(e) => handleUpdateTempLine(index, 'clientName', e.target.value)}
@@ -948,7 +957,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={isDebitType(line.voucherType) ? formatAmount(line.amount) : ''}
                   onChange={(e) => handleUpdateTempLine(index, 'amount', e.target.value)}
@@ -957,7 +966,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={!isDebitType(line.voucherType) ? formatAmount(line.amount) : ''}
                   onChange={(e) => handleUpdateTempLine(index, 'amount', e.target.value)}
@@ -966,7 +975,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={line.descriptionCode || ''}
                   onChange={(e) => handleUpdateTempLine(index, 'descriptionCode', e.target.value)}
@@ -974,7 +983,7 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <input
+                <Input
                   type="text"
                   value={line.description || ''}
                   onChange={(e) => handleUpdateTempLine(index, 'description', e.target.value)}
@@ -982,12 +991,13 @@ function VoucherTable({ searchDates }) {
                 />
               </td>
               <td>
-                <button
-                  className={styles.deleteButton}
+                <Button
+                  variant="danger"
+                  size="small"
                   onClick={() => handleRemoveTempLine(index)}
                 >
                   제거
-                </button>
+                </Button>
               </td>
             </tr>
           ))}
@@ -1011,7 +1021,7 @@ function VoucherTable({ searchDates }) {
           {!editingVoucherId && (
             <tr className={styles.newLineRow}>
             <td>
-              <input
+              <Input
                 ref={monthInputRef}
                 type="text"
                 name="month"
@@ -1022,7 +1032,7 @@ function VoucherTable({ searchDates }) {
               />
             </td>
             <td>
-              <input
+              <Input
                 type="text"
                 name="day"
                 value={currentLine.day}
@@ -1032,7 +1042,7 @@ function VoucherTable({ searchDates }) {
               />
             </td>
             <td>
-              <select
+              <Select
                 name="voucherType"
                 value={currentLine.voucherType}
                 onChange={handleCurrentLineChange}
@@ -1043,7 +1053,7 @@ function VoucherTable({ searchDates }) {
                     {option.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </td>
             <td>-</td>
             <SearchInput
@@ -1074,7 +1084,7 @@ function VoucherTable({ searchDates }) {
               namePlaceholder="거래처명 (F2)"
             />
             <td>
-              <input
+              <Input
                 type="text"
                 name="amount"
                 value={isDebitType(currentLine.voucherType) ? formatAmount(currentLine.amount) : ''}
@@ -1084,7 +1094,7 @@ function VoucherTable({ searchDates }) {
               />
             </td>
             <td>
-              <input
+              <Input
                 type="text"
                 name="amount"
                 value={!isDebitType(currentLine.voucherType) ? formatAmount(currentLine.amount) : ''}
@@ -1094,7 +1104,7 @@ function VoucherTable({ searchDates }) {
               />
             </td>
             <td>
-              <input
+              <Input
                 type="text"
                 name="descriptionCode"
                 value={currentLine.descriptionCode}
@@ -1103,7 +1113,7 @@ function VoucherTable({ searchDates }) {
               />
             </td>
             <td>
-              <input
+              <Input
                 type="text"
                 name="description"
                 value={currentLine.description}
@@ -1118,12 +1128,13 @@ function VoucherTable({ searchDates }) {
               />
             </td>
             <td>
-              <button
-                className={styles.addButton}
+              <Button
+                variant="primary"
+                size="small"
                 onClick={handleAddLine}
               >
                 추가
-              </button>
+              </Button>
             </td>
           </tr>
           )}
@@ -1133,13 +1144,14 @@ function VoucherTable({ searchDates }) {
       {/* 전표 저장 버튼 - 수정 모드가 아닐 때만 표시 */}
       {!editingVoucherId && (
         <div className={styles.actionButtons}>
-          <button
-            className={styles.saveVoucherButton}
+          <Button
+            variant="success"
+            size="medium"
             onClick={handleSaveVoucher}
             disabled={!totals.balanced || tempLines.length === 0}
           >
             전표 저장
-          </button>
+          </Button>
         </div>
       )}
 

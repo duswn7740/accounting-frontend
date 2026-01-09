@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import * as clientApi from '@/api/clientApi';
 import { formatBusinessNumber, formatCompanyTel } from '@/utils/companyValidate';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import Select from '../../components/Select';
 import styles from './ClientModal.module.css';
 
 function ClientModal({ client, companyId, onClose, onSuccess }) {
@@ -233,17 +236,16 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
             <label className={styles.label}>
               거래처 유형<span className={styles.required}>*</span>
             </label>
-            <select
+            <Select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={styles.select}
               disabled={isEdit}
             >
               <option value="일반">일반</option>
               <option value="은행">은행</option>
               <option value="카드">카드</option>
-            </select>
+            </Select>
             {isEdit && (
               <p className={styles.infoMessage}>수정 모드에서는 유형을 변경할 수 없습니다</p>
             )}
@@ -255,39 +257,36 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
               거래처 코드<span className={styles.required}>*</span>
             </label>
             {isEdit ? (
-              <input
+              <Input
                 type="text"
                 value={formData.clientCode}
                 readOnly
-                className={styles.input}
                 style={{ backgroundColor: '#f8f9fa', cursor: 'default' }}
               />
             ) : (
               <>
                 <div className={styles.codeWrapper}>
-                  <input
+                  <Input
                     type="text"
                     name="clientCode"
                     value={formData.clientCode}
                     onChange={handleChange}
-                    className={styles.input}
                     placeholder="00000 (5자리)"
-                    maxLength={5}
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="check"
                     onClick={handleCheckCode}
-                    className={styles.checkButton}
                   >
                     중복 확인
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="check"
                     onClick={handleAutoGenerate}
-                    className={styles.autoButton}
                   >
                     자동 생성
-                  </button>
+                  </Button>
                 </div>
                 {formData.clientCode && !isCodeChecked && (
                   <p className={styles.warningMessage}>중복 확인을 해주세요</p>
@@ -301,14 +300,12 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
             <label className={styles.label}>
               거래처명<span className={styles.required}>*</span>
             </label>
-            <input
+            <Input
               type="text"
               name="clientName"
               value={formData.clientName}
               onChange={handleChange}
-              className={styles.input}
               placeholder="거래처명"
-              required
             />
           </div>
           
@@ -318,14 +315,12 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
               <label className={styles.label}>
                 사업자번호<span className={styles.required}>*</span>
               </label>
-              <input
+              <Input
                 type="text"
                 name="businessNumber"
                 value={formData.businessNumber}
                 onChange={handleChange}
-                className={styles.input}
                 placeholder="000-00-00000"
-                required
               />
             </div>
           )}
@@ -335,14 +330,12 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
               <label className={styles.label}>
                 계좌번호<span className={styles.required}>*</span>
               </label>
-              <input
+              <Input
                 type="text"
                 name="accountNumber"
                 value={formData.accountNumber}
                 onChange={handleChange}
-                className={styles.input}
                 placeholder="계좌번호를 입력하세요"
-                required
               />
             </div>
           )}
@@ -352,14 +345,12 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
               <label className={styles.label}>
                 카드번호<span className={styles.required}>*</span>
               </label>
-              <input
+              <Input
                 type="text"
                 name="accountNumber"
                 value={formData.accountNumber}
                 onChange={handleChange}
-                className={styles.input}
                 placeholder="카드번호를 입력하세요"
-                required
               />
             </div>
           )}
@@ -369,14 +360,12 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
             <label className={styles.label}>
               대표자명<span className={styles.required}>*</span>
             </label>
-            <input
+            <Input
               type="text"
               name="ceoName"
               value={formData.ceoName}
               onChange={handleChange}
-              className={styles.input}
               placeholder="대표자명"
-              required
             />
           </div>
           
@@ -386,47 +375,43 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
               주소<span className={styles.required}>*</span>
             </label>
             <div className={styles.inputWrapper}>
-              <input
+              <Input
                 type="text"
                 name="address"
                 value={formData.address}
                 readOnly
-                className={styles.input}
                 placeholder="주소"
-                required
               />
-              <button
+              <Button
                 type="button"
+                variant="address"
                 onClick={handleSearchAddress}
-                className={styles.addressButton}
               >
                 주소 검색
-              </button>
+              </Button>
             </div>
           </div>
           
           {/* 전화번호 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>전화번호</label>
-            <input
+            <Input
               type="text"
               name="tel"
               value={formData.tel}
               onChange={handleChange}
-              className={styles.input}
               placeholder="02-0000-0000 또는 000-0000-0000"
             />
           </div>
-          
+
           {/* 이메일 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>이메일</label>
-            <input
+            <Input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={styles.input}
               placeholder="email@example.com"
             />
           </div>
@@ -434,34 +419,33 @@ function ClientModal({ client, companyId, onClose, onSuccess }) {
           {/* 거래처 유형 */}
           <div className={styles.formGroup}>
             <label className={styles.label}>거래처 유형</label>
-            <select
+            <Select
               name="clientType"
               value={formData.clientType}
               onChange={handleChange}
-              className={styles.select}
             >
               <option value="매출">매출</option>
               <option value="매입">매입</option>
               <option value="양방">양방</option>
-            </select>
+            </Select>
           </div>
           
           {/* 버튼 */}
           <div className={styles.buttonGroup}>
-            <button
+            <Button
               type="submit"
+              variant="primary"
               disabled={loading || (!isEdit && !isCodeChecked)}
-              className={styles.submitButton}
             >
               {loading ? '저장 중...' : isEdit ? '수정' : '등록'}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="secondary"
               onClick={onClose}
-              className={styles.cancelButton}
             >
               취소
-            </button>
+            </Button>
           </div>
         </form>
       </div>

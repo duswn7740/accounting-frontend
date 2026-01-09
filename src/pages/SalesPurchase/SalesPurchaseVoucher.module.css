@@ -48,35 +48,9 @@
   font-size: 14px;
 }
 
-.input {
-  padding: 10px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #007bff;
-}
-
-.select {
-  padding: 10px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-}
-
 .clientSelect {
   display: flex;
   gap: 10px;
-}
-
-.clientSelect .input {
-  flex: 1;
-  cursor: pointer;
 }
 
 .searchButton {
@@ -132,95 +106,9 @@
   border-top: 2px solid #dee2e6;
 }
 
-.selectSmall {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 13px;
-}
-
-.inputSmall {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 13px;
-}
-
-.inputSmall:read-only {
-  background: #f8f9fa;
-  cursor: pointer;
-}
-
-.inputMedium {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 13px;
-}
-
-.inputMedium:read-only {
-  background: #f8f9fa;
-  cursor: pointer;
-}
-
-.inputLarge {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 13px;
-}
-
-.deleteButton {
-  padding: 6px 12px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.deleteButton:hover {
-  background: #c82333;
-}
-
 /* 버튼 그룹 */
 .buttonGroup {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-}
-
-.addButton {
-  padding: 12px 24px;
-  background: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.addButton:hover {
-  background: #218838;
-}
-
-.saveButton {
-  padding: 12px 24px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.saveButton:hover {
-  background: #0056b3;
 }

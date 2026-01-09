@@ -1,0 +1,76 @@
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* 전표 유형 배지 */
+.매출 {
+  background: #d4edda;
+  color: #155724;
+}
+
+.매입 {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.면세매출 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.면세매입 {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.불공 {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+/* 상태 배지 */
+.확정 {
+  background: #d4edda;
+  color: #155724;
+}
+
+.임시저장 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* 기본 배지 */
+.default {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.primary {
+  background: #cfe2ff;
+  color: #084298;
+}
+
+.success {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.danger {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.warning {
+  background: #fff3cd;
+  color: #997404;
+}
+
+.info {
+  background: #cff4fc;
+  color: #055160;
+}

@@ -15,22 +15,6 @@
   margin: 0;
 }
 
-.createButton {
-  padding: 10px 20px;
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.createButton:hover {
-  background-color: #229954;
-}
-
 /* 탭 메뉴 */
 .tabs {
   display: flex;
@@ -125,34 +109,4 @@
 .actionButtons {
   display: flex;
   gap: 10px;
-}
-
-.editButton {
-  padding: 8px 16px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.editButton:hover {
-  background-color: #2980b9;
-}
-
-.deleteButton {
-  padding: 8px 16px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.deleteButton:hover {
-  background-color: #c0392b;
 }

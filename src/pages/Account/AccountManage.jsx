@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAccountsByCompany, deleteAccount } from '../../api/accountApi';
 import AccountModal from './AccountModal';
+import Button from '../../components/Button';
 import styles from './AccountManage.module.css';
 
 function AccountManage() {
@@ -102,9 +103,9 @@ function AccountManage() {
       <div className={styles.header}>
         <h2>계정과목 관리</h2>
         {userRole === 'ADMIN' && (
-          <button className={styles.addButton} onClick={handleAddAccount}>
+          <Button variant="primary" onClick={handleAddAccount}>
             계정과목 추가
-          </button>
+          </Button>
         )}
       </div>
 
@@ -149,12 +150,12 @@ function AccountManage() {
                   <td>{account.is_system ? '기본' : '추가'}</td>
                   {userRole === 'ADMIN' && (
                     <td>
-                      <button className={styles.editButton} onClick={() => handleEditAccount(account)}>
+                      <Button variant="primary" size="small" onClick={() => handleEditAccount(account)}>
                         수정
-                      </button>
-                      <button className={styles.deleteButton} onClick={() => handleDeleteAccount(account)}>
+                      </Button>
+                      <Button variant="danger" size="small" onClick={() => handleDeleteAccount(account)}>
                         삭제
-                      </button>
+                      </Button>
                     </td>
                   )}
                 </tr>

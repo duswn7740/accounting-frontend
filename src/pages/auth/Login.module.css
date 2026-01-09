@@ -1,5 +1,5 @@
 .container {
-  max-width: 600px;
+  max-width: 450px;
   margin: 80px auto;
   padding: 40px;
   background: white;
@@ -24,62 +24,57 @@
 .formGroup {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
 .label {
   display: block;
-  margin-bottom: 8px;
   font-weight: 600;
   color: #34495e;
   font-size: 14px;
-}
-
-.required {
-  color: #e74c3c;
-  margin-left: 3px;
-}
-
-.radioGroup {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.radioLabel {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  font-weight: normal;
-}
-
-.inputWrapper {
-  display: flex;
-  gap: 10px;
-}
-
-.errorMessage {
-  color: #e74c3c;
-  font-size: 13px;
-  margin-top: 5px;
-  min-height: 18px;
 }
 
 .buttonGroup {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
-.loginPrompt {
+.divider {
   text-align: center;
-  margin-top: 25px;
+  margin: 20px 0;
+  color: #95a5a6;
+  font-size: 14px;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #ddd;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.registerPrompt {
+  text-align: center;
+  margin-top: 20px;
   color: #7f8c8d;
   font-size: 14px;
 }
 
-.loginLink {
+.registerLink {
   margin-left: 8px;
   color: #3498db;
   text-decoration: none;
@@ -91,7 +86,14 @@
   font-size: 14px;
 }
 
-.loginLink:hover {
+.registerLink:hover {
   color: #2980b9;
   text-decoration: underline;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 5px;
+  min-height: 18px;
 }

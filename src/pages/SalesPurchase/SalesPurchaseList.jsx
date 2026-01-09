@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as salesPurchaseApi from '@/api/salesPurchaseApi';
+import Badge from '../../components/Badge';
 import styles from './SalesPurchaseList.module.css';
 
 function SalesPurchaseList() {
@@ -178,9 +179,9 @@ function SalesPurchaseList() {
                   <td>{new Date(voucher.voucher_date).toLocaleDateString()}</td>
                   <td>{voucher.voucher_no}</td>
                   <td>
-                    <span className={`${styles.badge} ${styles[voucher.voucher_type]}`}>
+                    <Badge variant={voucher.voucher_type}>
                       {voucher.voucher_type}
-                    </span>
+                    </Badge>
                   </td>
                   <td>{voucher.client_code}</td>
                   <td>{voucher.client_name}</td>
@@ -196,9 +197,9 @@ function SalesPurchaseList() {
                     {Number(voucher.total_amount).toLocaleString()}
                   </td>
                   <td>
-                    <span className={`${styles.statusBadge} ${styles[voucher.status]}`}>
+                    <Badge variant={voucher.status}>
                       {voucher.status}
-                    </span>
+                    </Badge>
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <button

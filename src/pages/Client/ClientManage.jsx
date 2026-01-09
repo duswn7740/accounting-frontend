@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as clientApi from '@/api/clientApi';
 import { formatBusinessNumber } from '@/utils/companyValidate';
+import Button from '../../components/Button';
 import styles from './ClientManage.module.css';
 import ClientModal from './ClientModal';
 
@@ -134,9 +135,9 @@ function ClientManage() {
       <div className={styles.header}>
         <h1 className={styles.title}>거래처 관리</h1>
         {userRole === 'ACCOUNTANT' && (
-          <button onClick={handleOpenCreateModal} className={styles.createButton}>
+          <Button variant="primary" onClick={handleOpenCreateModal}>
             + 거래처 등록
-          </button>
+          </Button>
         )}
       </div>
       
@@ -215,18 +216,20 @@ function ClientManage() {
                 
                 {userRole === 'ACCOUNTANT' && (
                   <div className={styles.actionButtons}>
-                    <button
+                    <Button
+                      variant="primary"
+                      size="small"
                       onClick={() => handleOpenEditModal(client)}
-                      className={styles.editButton}
                     >
                       수정
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="small"
                       onClick={() => handleDelete(client.client_id)}
-                      className={styles.deleteButton}
                     >
                       삭제
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>

@@ -1,0 +1,10 @@
+.emptyState {
+  padding: 60px 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.emptyState p {
+  font-size: 16px;
+  margin: 0;
+}

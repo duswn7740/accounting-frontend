@@ -12,6 +12,7 @@ import {
   Legend
 } from 'chart.js';
 import { getDashboardSummary, getMonthlyTrend, getNotifications } from '../../api/dashboardApi';
+import Select from '../../components/Select';
 import styles from './Dashboard.module.css';
 
 // Chart.js 등록
@@ -220,11 +221,11 @@ function Dashboard() {
             <h2>주요 지표</h2>
             <div className={styles.monthSelector}>
               <label>조회 월:</label>
-              <select value={selectedMonth} onChange={(e) => setSelectedMonth(parseInt(e.target.value))}>
+              <Select value={selectedMonth} onChange={(e) => setSelectedMonth(parseInt(e.target.value))}>
                 {[...Array(12)].map((_, i) => (
                   <option key={i} value={i + 1}>{i + 1}월</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           <div className={styles.kpiGrid}>
