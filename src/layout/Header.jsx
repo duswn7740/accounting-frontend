@@ -84,7 +84,6 @@ function Header() {
       }
     })
     .catch(err => {
-      console.error('Failed to load fiscal periods:', err);
     });
   } else {
     localStorage.removeItem('currentCompanyName');

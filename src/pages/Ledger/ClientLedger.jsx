@@ -61,7 +61,6 @@ function ClientLedger() {
         setAccounts(data.accounts || []);
       }
     } catch (error) {
-      console.error('계정과목 조회 실패:', error);
     }
   };
 
@@ -78,7 +77,6 @@ function ClientLedger() {
         setClients(data.clients || []);
       }
     } catch (error) {
-      console.error('거래처 조회 실패:', error);
     }
   };
 
@@ -153,7 +151,6 @@ function ClientLedger() {
         setLedgerData([]); // 상세 데이터 초기화
       }
     } catch (error) {
-      console.error('거래처별 원장 조회 실패:', error);
       alert('거래처별 원장 조회에 실패했습니다');
       setClientSummary([]);
     }
@@ -204,7 +201,6 @@ function ClientLedger() {
         setLedgerData(data.ledger || []);
       }
     } catch (error) {
-      console.error('거래처별 원장 상세 조회 실패:', error);
       alert('거래처별 원장 상세 조회에 실패했습니다');
       setLedgerData([]);
     }

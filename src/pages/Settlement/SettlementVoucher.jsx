@@ -48,7 +48,6 @@ function SettlementVoucher() {
         }
       }
     } catch (error) {
-      console.error('결산 데이터 조회 실패:', error);
     } finally {
       setLoading(false);
     }
@@ -63,10 +62,6 @@ function SettlementVoucher() {
   };
 
   const handleSaveSettlement = async () => {
-    console.log('[결산전표] 생성 시작');
-    console.log('[결산전표] fiscalYear:', fiscalYear);
-    console.log('[결산전표] inventory:', inventory);
-
     if (!fiscalYear) {
       alert('회계기수를 선택해주세요');
       return;
@@ -74,16 +69,12 @@ function SettlementVoucher() {
 
     const confirmMessage = `${fiscalYear}기 결산전표를 생성하시겠습니까?`;
     if (!window.confirm(confirmMessage)) {
-      console.log('[결산전표] 사용자가 취소함');
       return;
     }
 
     setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      console.log('[결산전표] user:', user);
-      console.log('[결산전표] 요청 URL:', `/api/settlement/voucher/${user.companyId}/${fiscalYear}`);
-      console.log('[결산전표] 요청 body:', { inventory });
 
       const response = await fetch(
         `/api/settlement/voucher/${user.companyId}/${fiscalYear}`,
@@ -99,10 +90,7 @@ function SettlementVoucher() {
         }
       );
 
-      console.log('[결산전표] 응답 상태:', response.status, response.statusText);
-
       const data = await response.json();
-      console.log('[결산전표] 응답 데이터:', data);
 
       if (response.ok) {
         alert('결산전표가 생성되었습니다');
@@ -111,7 +99,6 @@ function SettlementVoucher() {
         alert(data.message || '결산전표 생성에 실패했습니다');
       }
     } catch (error) {
-      console.error('결산전표 생성 실패:', error);
       alert('결산전표 생성에 실패했습니다');
     } finally {
       setLoading(false);

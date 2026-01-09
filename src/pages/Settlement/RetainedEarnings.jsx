@@ -60,7 +60,6 @@ function RetainedEarnings() {
         }
       }
     } catch (error) {
-      console.error('이익잉여금 데이터 조회 실패:', error);
     }
   };
 
@@ -112,7 +111,6 @@ function RetainedEarnings() {
         alert(data.message || '처분일 저장에 실패했습니다');
       }
     } catch (error) {
-      console.error('처분일 저장 실패:', error);
       alert('처분일 저장에 실패했습니다');
     } finally {
       setLoading(false);

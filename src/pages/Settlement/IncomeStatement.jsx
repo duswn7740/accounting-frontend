@@ -31,7 +31,6 @@ function IncomeStatement() {
         setIncomeData(data);
       }
     } catch (error) {
-      console.error('손익계산서 데이터 조회 실패:', error);
     }
   };
 
@@ -68,7 +67,6 @@ function IncomeStatement() {
         alert(data.message || '손익계산 결산에 실패했습니다');
       }
     } catch (error) {
-      console.error('손익계산 결산 실패:', error);
       alert('손익계산 결산에 실패했습니다');
     } finally {
       setLoading(false);

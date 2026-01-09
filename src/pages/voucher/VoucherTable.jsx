@@ -65,7 +65,6 @@ function VoucherTable({ searchDates }) {
       const response = await getAccountsByCompany(user.companyId);
       setAccounts(response.accounts);
     } catch (error) {
-      console.error('계정과목 조회 실패:', error);
     }
   };
 
@@ -75,7 +74,6 @@ function VoucherTable({ searchDates }) {
       const response = await getClientsByCompany(user.companyId);
       setClients(response.clients);
     } catch (error) {
-      console.error('거래처 조회 실패:', error);
     }
   };
 
@@ -89,7 +87,6 @@ function VoucherTable({ searchDates }) {
       );
       setLines(response.lines || []);
     } catch (error) {
-      console.error('전표 조회 실패:', error);
       setLines([]);
     }
   };
@@ -174,8 +171,6 @@ function VoucherTable({ searchDates }) {
 
     // 현재 라인을 임시로 추가
     const newTempLines = [...tempLines, { ...currentLine }];
-    console.log('[추가 버튼 클릭]');
-    console.log('newTempLines:', newTempLines);
 
     // 새로운 라인을 포함한 차대변 계산
     let debit = 0;
@@ -192,11 +187,9 @@ function VoucherTable({ searchDates }) {
     });
 
     const balanced = Math.abs(debit - credit) < 0.01;
-    console.log('차대변 계산:', { debit, credit, balanced });
 
     // 차대변이 일치해야 저장
     if (balanced && newTempLines.length > 0) {
-      console.log('[자동 저장 시작]');
       try {
         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -262,8 +255,6 @@ function VoucherTable({ searchDates }) {
         }, 0);
 
       } catch (error) {
-        console.error('자동 저장 실패:', error);
-        console.error('에러 상세:', error.response?.data);
         alert(error.response?.data?.error || '저장 실패');
       }
     } else {
@@ -384,9 +375,6 @@ function VoucherTable({ searchDates }) {
         }))
       };
 
-      console.log('전송할 데이터:', JSON.stringify(voucherData, null, 2));
-      console.log('tempLines:', tempLines);
-
       const response = await createVoucherWithLines(voucherData);
       alert('전표가 저장되었습니다');
 
@@ -413,8 +401,6 @@ function VoucherTable({ searchDates }) {
       }
 
     } catch (error) {
-      console.error('전표 저장 실패:', error);
-      console.error('에러 상세:', error.response?.data);
       alert(error.response?.data?.error || error.message || '저장 실패');
     }
   };

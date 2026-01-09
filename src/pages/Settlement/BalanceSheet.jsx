@@ -32,7 +32,6 @@ function BalanceSheet() {
         setBalanceData(data);
       }
     } catch (error) {
-      console.error('대차대조표 데이터 조회 실패:', error);
     } finally {
       setLoading(false);
     }

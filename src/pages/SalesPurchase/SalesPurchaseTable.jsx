@@ -69,7 +69,6 @@ function SalesPurchaseTable({ searchDates }) {
       const response = await getAccountsByCompany(user.companyId);
       setAccounts(response.accounts);
     } catch (error) {
-      console.error('계정과목 조회 실패:', error);
     }
   };
 
@@ -79,7 +78,6 @@ function SalesPurchaseTable({ searchDates }) {
       const response = await getClientsByCompany(user.companyId);
       setClients(response.clients);
     } catch (error) {
-      console.error('거래처 조회 실패:', error);
     }
   };
 
@@ -91,10 +89,8 @@ function SalesPurchaseTable({ searchDates }) {
         searchDates.startDate,
         searchDates.endDate
       );
-      console.log('조회된 전표 데이터:', response.vouchers);
       setVouchers(response.vouchers);
     } catch (error) {
-      console.error('전표 조회 실패:', error);
     }
   };
 
@@ -220,7 +216,6 @@ function SalesPurchaseTable({ searchDates }) {
 
     // 부가세 자동 추가 (매출/매입인 경우)
     const voucherType = currentLine.voucherType;
-    console.log('부가세 자동 추가 시작:', { voucherType, newTempLinesLength: newTempLines.length });
 
     if (voucherType === '매출' || voucherType === '매입') {
       // 새로 추가된 라인을 포함한 차대변 합계 계산
@@ -229,8 +224,6 @@ function SalesPurchaseTable({ searchDates }) {
         acc.credit += parseFloat(line.creditAmount) || 0;
         return acc;
       }, { debit: 0, credit: 0 });
-
-      console.log('차대변 합계:', newTotals);
 
       let vatAccountCode = null;
       let vatDebitCredit = null;
@@ -247,7 +240,6 @@ function SalesPurchaseTable({ searchDates }) {
         if (supplyAmount > 0) {
           vatAccountCode = '255'; // 부가세예수금
           vatDebitCredit = '대변';
-          console.log('매출 부가세 계산:', { vatAccountCode, supplyAmount, existingVat });
         }
       } else if (voucherType === '매입') {
         // 차변에서 부가세대급금 제외한 금액 = 공급가액
@@ -258,13 +250,11 @@ function SalesPurchaseTable({ searchDates }) {
         if (supplyAmount > 0) {
           vatAccountCode = '135'; // 부가세대급금
           vatDebitCredit = '차변';
-          console.log('매입 부가세 계산:', { vatAccountCode, supplyAmount, existingVat });
         }
       }
 
       if (vatAccountCode && supplyAmount > 0) {
         const vatAccount = accounts.find(a => a.account_code === vatAccountCode);
-        console.log('부가세 계정 찾기:', { vatAccountCode, found: !!vatAccount });
 
         if (vatAccount) {
           // 기존 부가세 라인 제거 (있으면)
@@ -272,7 +262,6 @@ function SalesPurchaseTable({ searchDates }) {
 
           // 부가세 계산
           const vatAmount = Math.round(supplyAmount * 0.1);
-          console.log('부가세 금액:', vatAmount);
 
           // 부가세 라인 추가
           const vatLine = {
@@ -294,7 +283,6 @@ function SalesPurchaseTable({ searchDates }) {
             description: '부가세'
           };
 
-          console.log('부가세 라인 추가:', vatLine);
           const finalTempLines = [...linesWithoutVat, vatLine];
           setTempLines(finalTempLines);
 
@@ -302,8 +290,6 @@ function SalesPurchaseTable({ searchDates }) {
           setTimeout(() => {
             checkAndAutoSave(finalTempLines);
           }, 100);
-        } else {
-          console.log('부가세 계정을 찾을 수 없습니다. accounts:', accounts.map(a => a.account_code));
         }
       } else {
         // 부가세가 없는 경우에도 차대변 확인
@@ -347,10 +333,7 @@ function SalesPurchaseTable({ searchDates }) {
     const debitTotal = lines.reduce((sum, line) => sum + (parseFloat(line.debitAmount) || 0), 0);
     const creditTotal = lines.reduce((sum, line) => sum + (parseFloat(line.creditAmount) || 0), 0);
 
-    console.log('차대변 합계 체크:', { debitTotal, creditTotal, balanced: Math.abs(debitTotal - creditTotal) < 0.01 });
-
     if (Math.abs(debitTotal - creditTotal) < 0.01 && lines.length > 0) {
-      console.log('차대변 일치! 자동 저장 실행');
       handleSaveVoucher(lines); // lines를 인자로 전달
     }
   };
@@ -428,17 +411,11 @@ function SalesPurchaseTable({ searchDates }) {
       }, { debit: 0, credit: 0 });
 
       // 공급가액과 부가세 계산 (lines에 이미 부가세 라인이 포함되어 있음)
-      console.log('저장 시 전표 유형:', voucherType);
-      console.log('저장 시 lines:', lines);
-      console.log('저장 시 linesTotals:', linesTotals);
-
       if (voucherType === '매출') {
         // 매출: 대변에서 부가세예수금(255) 제외한 금액 = 공급가액
         const vatLine = lines.find(line => line.accountCode === '255');
         const supplyAmount = linesTotals.credit - (vatLine ? (vatLine.creditAmount || 0) : 0);
         const vatAmount = vatLine ? (vatLine.creditAmount || 0) : 0;
-
-        console.log('매출 전표:', { vatLine, supplyAmount, vatAmount, totalDebit: linesTotals.debit });
 
         voucherData.totalSupplyAmount = supplyAmount;
         voucherData.totalVatAmount = vatAmount;
@@ -448,8 +425,6 @@ function SalesPurchaseTable({ searchDates }) {
         const vatLine = lines.find(line => line.accountCode === '135');
         const supplyAmount = linesTotals.debit - (vatLine ? (vatLine.debitAmount || 0) : 0);
         const vatAmount = vatLine ? (vatLine.debitAmount || 0) : 0;
-
-        console.log('매입 전표:', { vatLine, supplyAmount, vatAmount, totalCredit: linesTotals.credit });
 
         voucherData.totalSupplyAmount = supplyAmount;
         voucherData.totalVatAmount = vatAmount;
@@ -463,8 +438,6 @@ function SalesPurchaseTable({ searchDates }) {
         }
         voucherData.totalAmount = linesTotals.debit;
       }
-
-      console.log('최종 voucherData:', voucherData);
 
       // 최종 차대변 검증 (부가세 라인 추가 후)
       const finalDebit = voucherLines

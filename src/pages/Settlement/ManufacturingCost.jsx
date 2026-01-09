@@ -38,7 +38,6 @@ function ManufacturingCost() {
         setCostData(data);
       }
     } catch (error) {
-      console.error('제조원가 데이터 조회 실패:', error);
     } finally {
       setLoading(false);
     }

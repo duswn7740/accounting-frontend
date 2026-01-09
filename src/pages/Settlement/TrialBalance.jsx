@@ -20,7 +20,6 @@ function TrialBalance() {
     setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      console.log('합계잔액시산표 조회 시작:', { companyId: user.companyId, fiscalYear: year });
 
       const response = await fetch(
         `/api/settlement/trial-balance/${user.companyId}/${year}`,
@@ -31,27 +30,14 @@ function TrialBalance() {
         }
       );
 
-      console.log('응답 상태:', response.status, response.statusText);
       const data = await response.json();
-      console.log('받은 데이터:', data);
-      console.log('계정 개수:', data.accounts?.length);
-
-      // 보통예금 계정 확인
-      const ordinaryDeposit = data.accounts?.find(acc => acc.accountName?.includes('보통예금'));
-      if (ordinaryDeposit) {
-        console.log('보통예금 계정 발견:', ordinaryDeposit);
-      } else {
-        console.log('보통예금 계정 없음');
-      }
 
       if (response.ok) {
         setTrialBalanceData(data);
       } else {
-        console.error('API 응답 에러:', data);
         alert(`데이터 조회 실패: ${data.message || '알 수 없는 오류'}`);
       }
     } catch (error) {
-      console.error('합계잔액시산표 데이터 조회 실패:', error);
       alert(`오류 발생: ${error.message}`);
     } finally {
       setLoading(false);
@@ -67,7 +53,6 @@ function TrialBalance() {
 
   // 금액이 있는 계정만 필터링 (합계 또는 잔액에 금액이 있는 경우)
   const filterAccountsWithAmount = (accounts) => {
-    console.log('필터링 전 계정 수:', accounts.length);
     const filtered = accounts.filter(account => {
       const hasTotal = (account.totalDebit && account.totalDebit !== 0) ||
                        (account.totalCredit && account.totalCredit !== 0);
@@ -75,23 +60,8 @@ function TrialBalance() {
                          (account.balanceCredit && account.balanceCredit !== 0);
       const shouldShow = hasTotal || hasBalance;
 
-      // 보통예금 계정 필터링 로그
-      if (account.accountName?.includes('보통예금')) {
-        console.log('보통예금 필터링:', {
-          accountName: account.accountName,
-          totalDebit: account.totalDebit,
-          totalCredit: account.totalCredit,
-          balanceDebit: account.balanceDebit,
-          balanceCredit: account.balanceCredit,
-          hasTotal,
-          hasBalance,
-          shouldShow
-        });
-      }
-
       return shouldShow;
     });
-    console.log('필터링 후 계정 수:', filtered.length);
     return filtered;
   };
 
@@ -115,20 +85,6 @@ function TrialBalance() {
         grouped[group] = [];
       }
       grouped[group].push(account);
-
-      // 보통예금 계정 그룹핑 로그
-      if (account.accountName?.includes('보통예금')) {
-        console.log('보통예금 그룹핑:', {
-          accountName: account.accountName,
-          accountCategory: account.accountCategory,
-          accountType: account.accountType,
-          group
-        });
-      }
-    });
-    console.log('그룹핑 결과:', Object.keys(grouped));
-    Object.keys(grouped).forEach(key => {
-      console.log(`${key}: ${grouped[key].length}개 계정`);
     });
     return grouped;
   };

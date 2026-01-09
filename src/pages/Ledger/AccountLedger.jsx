@@ -51,7 +51,6 @@ function AccountLedger() {
       const response = await getAccountSummary(user.companyId, { ...filters, fiscalYear });
       setAccountSummary(response.summary || []);
     } catch (error) {
-      console.error('계정 요약 조회 실패:', error);
       alert('계정 요약 조회에 실패했습니다');
       setAccountSummary([]);
     }
@@ -67,7 +66,6 @@ function AccountLedger() {
       setLedgerData(response.ledger || []);
       setExpandedVouchers([]);
     } catch (error) {
-      console.error('원장 조회 실패:', error);
       alert('원장 조회에 실패했습니다');
       setLedgerData([]);
     }
@@ -85,7 +83,6 @@ function AccountLedger() {
         setAccounts(data.accounts || []);
       }
     } catch (error) {
-      console.error('계정과목 조회 실패:', error);
     }
   };
 
@@ -95,7 +92,6 @@ function AccountLedger() {
       const response = await getClientsByCompany(user.companyId);
       setClients(response.clients || []);
     } catch (error) {
-      console.error('거래처 조회 실패:', error);
     }
   };
 
@@ -168,9 +164,6 @@ function AccountLedger() {
   const handleStartEdit = (voucher) => {
     const voucherKey = `${voucher.voucher_id}-${voucher.voucher_type}`;
 
-    console.log('handleStartEdit - voucher:', voucher);
-    console.log('handleStartEdit - voucher.lines:', voucher.lines);
-
     // 상세보기가 닫혀있으면 열기
     if (!expandedVouchers.includes(voucherKey)) {
       setExpandedVouchers(prev => [...prev, voucherKey]);
@@ -192,7 +185,6 @@ function AccountLedger() {
       originalLineNo: line.line_no
     }));
 
-    console.log('handleStartEdit - formData:', formData);
     setEditFormData(formData);
   };
 
@@ -243,7 +235,6 @@ function AccountLedger() {
 
       // 3. 기존 라인 업데이트
       const updatedLines = editFormData.filter(line => !line.isNew && !line.isDeleted);
-      console.log('handleSaveEdit - updatedLines:', updatedLines);
       for (const lineData of updatedLines) {
         const updateData = {
           account_code: lineData.account_code,
@@ -253,7 +244,6 @@ function AccountLedger() {
           description_code: lineData.description_code,
           description: lineData.description
         };
-        console.log('handleSaveEdit - updating line:', lineData.originalLineNo, updateData);
         await updateVoucherLine(voucherType, voucherId, lineData.originalLineNo, updateData);
       }
 
@@ -264,7 +254,6 @@ function AccountLedger() {
       await fetchLedger();
       await fetchAccountSummary();
     } catch (error) {
-      console.error('전표 수정 실패:', error);
       alert('전표 수정에 실패했습니다.');
     }
   };
@@ -588,7 +577,6 @@ function AccountLedger() {
       await fetchLedger();
       await fetchAccountSummary();
     } catch (error) {
-      console.error('전표 삭제 실패:', error);
       alert('전표 삭제에 실패했습니다');
     }
   };
