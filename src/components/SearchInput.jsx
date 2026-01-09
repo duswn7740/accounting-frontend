@@ -94,6 +94,14 @@ function SearchInput({
     setSuggestions([]);
   };
 
+  // Blur 이벤트 핸들러 (드롭다운 클릭 시 동작하도록 지연)
+  const handleBlur = () => {
+    setTimeout(() => {
+      setShowSuggestions(false);
+      setSuggestions([]);
+    }, 200);
+  };
+
   // 코드 키보드 이벤트
   const handleCodeKeyDown = (e) => {
     if (e.key === 'F2') {
@@ -190,6 +198,7 @@ function SearchInput({
           value={codeValue}
           onChange={(e) => handleCodeChange(e.target.value)}
           onKeyDown={handleCodeKeyDown}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder={codePlaceholder}
         />
@@ -215,6 +224,7 @@ function SearchInput({
           value={nameValue}
           onChange={(e) => handleNameChange(e.target.value)}
           onKeyDown={handleNameKeyDown}
+          onBlur={handleBlur}
           className={styles.input}
           placeholder={namePlaceholder}
         />
