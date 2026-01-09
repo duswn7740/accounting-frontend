@@ -817,7 +817,13 @@ function AccountLedger() {
                               onClick={() => handleToggleVoucher(voucherKey)}
                             >
                               <td>{voucher.voucher_date.substring(0, 10)}</td>
-                              <td>{voucher.voucher_type === 'carry_forward' ? '' : String(voucher.voucher_no).padStart(3, '0')}</td>
+                              <td>
+                                {voucher.voucher_type === 'carry_forward'
+                                  ? ''
+                                  : (voucher.voucher_no && voucher.voucher_no.includes('-')
+                                      ? voucher.voucher_no.split('-')[1]
+                                      : String(voucher.voucher_no || '').padStart(3, '0'))}
+                              </td>
                               <td>{voucher.voucher_type === 'carry_forward' ? '이월' : getVoucherTypeLabel(voucher.voucher_type)}</td>
                               <td>{voucher.voucher_type === 'carry_forward' ? '' : line.account_code}</td>
                               <td>{voucher.voucher_type === 'carry_forward' ? '' : line.account_name}</td>

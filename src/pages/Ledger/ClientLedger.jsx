@@ -645,7 +645,11 @@ function ClientLedger() {
                       <td>{item.month}</td>
                       <td>{item.day}</td>
                       <td>{getVoucherTypeLabel(item.voucher_type)}</td>
-                      <td>{item.voucher_no}</td>
+                      <td>
+                        {item.voucher_no && item.voucher_no.includes('-')
+                          ? item.voucher_no.split('-')[1]
+                          : item.voucher_no}
+                      </td>
                       <td className={styles.amount}>{formatAmount(item.debit_amount)}</td>
                       <td className={styles.amount}>{formatAmount(item.credit_amount)}</td>
                       <td className={styles.amount}>{formatAmount(item.balance)}</td>

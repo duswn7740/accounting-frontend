@@ -807,7 +807,10 @@ function SalesPurchaseTable({ searchDates }) {
             {/* 저장된 전표들 */}
             {vouchers.map(voucher => {
               const isEditing = editingVoucherId === voucher.voucher_id;
-              const voucherNo = voucher.voucher_no ? String(voucher.voucher_no).padStart(3, '0') : '-';
+              // YYYYMMDD-001 형식에서 001 부분만 추출
+              const voucherNo = voucher.voucher_no && voucher.voucher_no.includes('-')
+                ? voucher.voucher_no.split('-')[1]
+                : (voucher.voucher_no || '-');
 
               return (
                 <React.Fragment key={`voucher-${voucher.voucher_id}`}>
