@@ -584,7 +584,9 @@ function VoucherTable({ searchDates }) {
 
   // 전표 전체 삭제
   const handleDeleteVoucher = async (voucherNo) => {
-    if (!window.confirm(`전표번호 ${voucherNo}의 모든 라인을 삭제하시겠습니까?`)) {
+    // 전표번호에서 뒤 3자리만 추출 (yyyymmdd-001 -> 001)
+    const shortVoucherNo = voucherNo.includes('-') ? voucherNo.split('-')[1] : voucherNo;
+    if (!window.confirm(`${shortVoucherNo}번 전표를 삭제하시겠습니까?`)) {
       return;
     }
 
@@ -1132,6 +1134,7 @@ function VoucherTable({ searchDates }) {
                 variant="primary"
                 size="small"
                 onClick={handleAddLine}
+                tabIndex={-1}
               >
                 추가
               </Button>

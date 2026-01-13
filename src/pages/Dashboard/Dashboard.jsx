@@ -43,6 +43,10 @@ function Dashboard() {
   const fiscalPeriodInfo = JSON.parse(localStorage.getItem('selectedFiscalPeriodInfo') || '{}');
   const fiscalYear = fiscalPeriodInfo.fiscalYear;
 
+  // 현재 선택된 회사 ID 가져오기
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const companyId = user.companyId;
+
   // 회계연도 표시용
   const fiscalYearDisplay = fiscalPeriodInfo.startDate
     ? `${fiscalYear}기 (${new Date(fiscalPeriodInfo.startDate).getFullYear()}년)`
@@ -63,13 +67,13 @@ function Dashboard() {
       setError(null);
 
       // KPI 요약 (선택한 월로 조회)
-      const summaryRes = await getDashboardSummary(fiscalPeriodInfo, selectedMonth);
+      const summaryRes = await getDashboardSummary(fiscalPeriodInfo, selectedMonth, companyId);
       if (summaryRes.success) {
         setSummary(summaryRes.summary);
       }
 
       // 월별 추이 (1~12월 전체)
-      const trendRes = await getMonthlyTrend(1, 12, fiscalYear);
+      const trendRes = await getMonthlyTrend(1, 12, fiscalYear, companyId);
       if (trendRes.success) {
         setTrendData(trendRes.data);
         setProfitData(trendRes.data);
