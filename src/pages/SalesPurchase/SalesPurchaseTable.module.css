@@ -256,3 +256,22 @@
   display: flex;
   gap: 8px;
 }
+
+.addButton {
+  padding: 6px 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.addButton:hover {
+  background-color: #2980b9;
+}
+
+.addButton:active {
+  background-color: #21618c;
+}

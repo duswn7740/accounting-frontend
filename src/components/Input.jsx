@@ -1,6 +1,7 @@
+import { forwardRef } from 'react';
 import styles from './Input.module.css';
 
-function Input({
+const Input = forwardRef(({
   type = 'text',
   value,
   onChange,
@@ -13,11 +14,12 @@ function Input({
   name,
   className = '',
   style = {}
-}) {
+}, ref) => {
   const inputClass = `${styles.input} ${className}`;
 
   return (
     <input
+      ref={ref}
       type={type}
       name={name}
       value={value}
@@ -32,6 +34,8 @@ function Input({
       style={style}
     />
   );
-}
+});
+
+Input.displayName = 'Input';
 
 export default Input;

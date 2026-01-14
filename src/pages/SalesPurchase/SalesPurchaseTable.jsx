@@ -325,11 +325,9 @@ function SalesPurchaseTable({ searchDates }) {
       description: ''
     }));
 
-    setTimeout(() => {
-      if (monthInputRef.current) {
-        monthInputRef.current.focus();
-      }
-    }, 0);
+    if (monthInputRef.current) {
+      monthInputRef.current.focus();
+    }
   };
 
   // 차대변 일치 시 자동 저장
@@ -1310,8 +1308,17 @@ function SalesPurchaseTable({ searchDates }) {
                 <Button
                   variant="primary"
                   size="small"
-                  onClick={handleAddLine}
-                  tabIndex={-1}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleAddLine();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddLine();
+                    }
+                  }}
+                  type="button"
                 >
                   추가
                 </Button>

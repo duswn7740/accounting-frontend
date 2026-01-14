@@ -251,11 +251,9 @@ function VoucherTable({ searchDates }) {
         }
 
         // 월 입력칸으로 포커스 이동
-        setTimeout(() => {
-          if (monthInputRef.current) {
-            monthInputRef.current.focus();
-          }
-        }, 0);
+        if (monthInputRef.current) {
+          monthInputRef.current.focus();
+        }
 
       } catch (error) {
         alert(error.response?.data?.error || '저장 실패');
@@ -281,11 +279,9 @@ function VoucherTable({ searchDates }) {
       });
 
       // 월 입력칸으로 포커스 이동
-      setTimeout(() => {
-        if (monthInputRef.current) {
-          monthInputRef.current.focus();
-        }
-      }, 0);
+      if (monthInputRef.current) {
+        monthInputRef.current.focus();
+      }
     }
   };
 
@@ -1133,8 +1129,17 @@ function VoucherTable({ searchDates }) {
               <Button
                 variant="primary"
                 size="small"
-                onClick={handleAddLine}
-                tabIndex={-1}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handleAddLine();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddLine();
+                  }
+                }}
+                type="button"
               >
                 추가
               </Button>
