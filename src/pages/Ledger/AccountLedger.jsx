@@ -639,7 +639,7 @@ function AccountLedger() {
   };
 
   // 전표별로 그룹화
-  const groupedLedger = ledgerData.reduce((acc, line) => {
+  const groupedLedgerObj = ledgerData.reduce((acc, line) => {
     const key = `${line.voucher_id}-${line.voucher_type}`;
     if (!acc[key]) {
       acc[key] = {
@@ -653,6 +653,18 @@ function AccountLedger() {
     acc[key].lines.push(line);
     return acc;
   }, {});
+
+  // 날짜 → 전표번호 순으로 정렬
+  const groupedLedger = Object.values(groupedLedgerObj).sort((a, b) => {
+    // 날짜 비교
+    if (a.voucher_date !== b.voucher_date) {
+      return a.voucher_date.localeCompare(b.voucher_date);
+    }
+    // 같은 날짜면 전표번호의 마지막 숫자로 비교
+    const aNo = parseInt(a.voucher_no.split('-').pop()) || 0;
+    const bNo = parseInt(b.voucher_no.split('-').pop()) || 0;
+    return aNo - bNo;
+  });
 
   return (
     <div className={styles.container}>
@@ -791,7 +803,7 @@ function AccountLedger() {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.values(groupedLedger).map(voucher => {
+                    {groupedLedger.map(voucher => {
                       const voucherKey = `${voucher.voucher_id}-${voucher.voucher_type}`;
                       const isExpanded = expandedVouchers.includes(voucherKey);
 
